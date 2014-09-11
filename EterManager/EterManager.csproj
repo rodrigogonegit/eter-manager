@@ -205,8 +205,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if  $(ConfigurationName) == Debug "C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\"vbinc.exe -af4
-if  $(ConfigurationName) == Release "C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\"vbinc.exe -af34</PostBuildEvent>
+    <PostBuildEvent>if  $(ConfigurationName) == Debug "$(SolutionDir)vbinc.exe" -af4
+if  $(ConfigurationName) == Release "$(SolutionDir)vbinc.exe" -af34</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

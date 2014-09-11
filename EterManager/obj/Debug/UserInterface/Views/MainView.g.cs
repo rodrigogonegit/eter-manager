@@ -9,10 +9,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using EterManager.Services.Resources;
-using EterManager.UserInterface.Controls;
-using EterManager.UserInterface.Converters;
-using EterManager.UserInterface.Helpers;
 using System;
 using System.Diagnostics;
 using System.Windows;
