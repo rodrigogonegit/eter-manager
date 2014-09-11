@@ -1,0 +1,39 @@
+D:\Backup\Projects\EterManager\EterManager\bin\Debug\EterManager.exe.config
+D:\Backup\Projects\EterManager\EterManager\obj\Debug\EterManager.exe
+D:\Backup\Projects\EterManager\EterManager\obj\Debug\EterManager.pdb
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\bin\Debug\EterManager.exe.config
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\bin\Debug\EterManager.exe
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\bin\Debug\EterManager.pdb
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\bin\Debug\Ninject.dll
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Brushes.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\Button.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\CheckBox.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\ComboBox.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\Expander.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\Separator.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\TabControl.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\ToggleButton.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\EterManager.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\App.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager_MarkupCompile.cache
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager_MarkupCompile.lref
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\App.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\ListBox.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\TextBlock.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.g.resources
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.Properties.Resources.resources
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.csproj.GenerateResource.Cache
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.exe
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.pdb
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\MainView.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\MainView.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\UserControls\SearchableTreeView.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\UserControls\SearchableTreeView.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\bin\Debug\MultiSelectTreeView.dll
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\UserControls\ProfilesTreeView.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\ProfileManagerView.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\UserControls\ProfilesTreeView.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\Views\ProfileManagerView.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\UserInterface\VisualResources\Controls\GroupBox.baml
+C:\Users\Rodrigo\Documents\Visual Studio 2013\Projects\EterManager\EterManager\obj\Debug\EterManager.csprojResolveAssemblyReference.cache
