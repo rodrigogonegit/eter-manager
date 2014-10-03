@@ -15,5 +15,7 @@ namespace EterManager.Services.Abstract
         void HideWindow<T>();
 
         void RenameWindow<T>(string newName, string originalName = null);
+
+        void TerminateProgram();
     }
 }

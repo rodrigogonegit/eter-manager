@@ -8,12 +8,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
+using EterManager.Services;
 
 namespace EterManager.Base
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
         internal IViewManager ViewManager = ((App)Application.Current).GetInstance<IViewManager>();
+        internal ILogger Logger = ((App)Application.Current).GetInstance<ILogger>();
+
+        // Constant values
+        internal static readonly string AppDataPath = "AppData/";
+        internal static readonly string ProfilesPath = AppDataPath + "Profiles/";
+
+
 
         #region INPC
         public event PropertyChangedEventHandler PropertyChanged;

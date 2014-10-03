@@ -42,6 +42,15 @@ namespace EterManager.UserInterface.ViewModels
                 case "PROFILES_MANAGER":
                     ViewManager.ShowWindow<ProfileManagerView>();
                     break;
+                case "EXIT":
+                    ViewManager.TerminateProgram();
+                    break;
+                case "PACKING_FILTERS":
+                    ViewManager.ShowWindow<PackingFiltersView>();
+                    break;
+                default:
+                    Logger.Warning("INTERNAL ERROR // CLOSE AND REPORT TO THE AUTHOR");
+                    break;
             }
         }
 

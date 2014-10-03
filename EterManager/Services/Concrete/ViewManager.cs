@@ -27,7 +27,8 @@ namespace EterManager.Services.Concrete
             }
             else
             {
-                Window wnd = (Activator.CreateInstance<T>() as Window);
+                var wnd = Activator.CreateInstance<T>() as Window;
+                if (wnd == null) return;
                 wnd.Show();
                 if (newTitle != null)
                     wnd.Title = newTitle;
@@ -72,19 +73,27 @@ namespace EterManager.Services.Concrete
             {
                 if (originalName != null && originalName.Trim() != "")
                 {
-                    Window wnd = windows.Cast<Window>().FirstOrDefault(x => x.Title.Contains(originalName));
+                    var wnd = windows.Cast<Window>().FirstOrDefault(x => x.Title.Contains(originalName));
 
                     if (wnd != null)
                         wnd.Title = newName;
                 }
                 else
                 {
-                    Window wnd = windows.Cast<Window>().FirstOrDefault();
+                    var wnd = windows.Cast<Window>().FirstOrDefault();
 
                     if (wnd != null)
                         wnd.Title = newName;
                 }
             }
+        }
+
+        /// <summary>
+        /// Terminates application instance
+        /// </summary>
+        public void TerminateProgram()
+        {
+            Application.Current.Shutdown();
         }
     }
 }

@@ -9,11 +9,11 @@
         </Grid.ColumnDefinitions>
         <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <MenuItem Header="File" >
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Exit" CommandParameter="EXIT" Command="{Binding OpenWindowCommand}"/>
             </MenuItem>
             <MenuItem Header="Manage" Height="25">
                 <MenuItem Header="Profiles" Command="{Binding OpenWindowCommand}" CommandParameter="PROFILES_MANAGER"/>
-                <MenuItem Header="Packing filters"/>
+                <MenuItem Header="Packing filters" Command="{Binding OpenWindowCommand}" CommandParameter="PACKING_FILTERS"/>
             </MenuItem>
         </Menu>
     </Grid>

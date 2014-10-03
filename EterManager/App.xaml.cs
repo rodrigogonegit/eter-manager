@@ -1,4 +1,5 @@
-﻿using EterManager.Services.Abstract;
+﻿using EterManager.Services;
+using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
 using EterManager.UserInterface.Views;
 using Ninject;
@@ -29,6 +30,7 @@ namespace EterManager
         {
             _container = new StandardKernel();
             _container.Bind<IViewManager>().To<ViewManager>().InSingletonScope();
+            _container.Bind<ILogger>().To<Logger>().InSingletonScope();
         }
 
         private void InitializeMainView()
