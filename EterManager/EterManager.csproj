@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,13 +69,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base\ConstantsBase.cs" />
     <Compile Include="Base\ViewModelBase.cs" />
-    <Compile Include="DataAccessLayer\XmlFileDal.cs" />
+    <Compile Include="Caliburn.Micro\EventAggregator.cs" />
+    <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
+    <Compile Include="Converters\ByteArrayToHexStringConverter.cs" />
     <Compile Include="Models\ClientProfile.cs" />
-    <Compile Include="Models\ITreeItem.cs" />
+    <Compile Include="Models\Abstract\ITreeItem.cs" />
+    <Compile Include="Models\Issue.cs" />
     <Compile Include="Models\TreeItem.cs" />
+    <Compile Include="Services\Abstract\ILocale.cs" />
     <Compile Include="Services\Abstract\ILogger.cs" />
     <Compile Include="Services\Abstract\IViewManager.cs" />
+    <Compile Include="Services\Concrete\Locale.cs" />
     <Compile Include="Services\Concrete\Logger.cs" />
     <Compile Include="Services\Concrete\ViewManager.cs" />
     <Compile Include="Services\Resources\BrushResourceItem.cs" />
@@ -93,6 +100,7 @@
     <Compile Include="UserInterface\Converters\ValueConverterBase.cs" />
     <Compile Include="UserInterface\Helpers\ListBoxItemHelper.cs" />
     <Compile Include="UserInterface\ViewModels\ClientProfileVM.cs" />
+    <Compile Include="UserInterface\ViewModels\IssuesListViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\MainWindowVM.cs" />
     <Compile Include="UserInterface\ViewModels\ProfileManagerVM.cs" />
     <Compile Include="UserInterface\ViewModels\ProfilesVM.cs" />
@@ -105,6 +113,9 @@
     <Compile Include="UserInterface\Views\ProfileManagerWindow.xaml.cs">
       <DependentUpon>ProfileManagerWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\Views\UserControls\IssuesListView.xaml.cs">
+      <DependentUpon>IssuesListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\Views\UserControls\ProfilesView.xaml.cs">
       <DependentUpon>ProfilesView.xaml</DependentUpon>
     </Compile>
@@ -116,6 +127,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\UserInput.cs" />
     <Page Include="UserInterface\Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -125,6 +137,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterface\Views\ProfileManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Views\UserControls\IssuesListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -203,6 +219,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -213,6 +230,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DataAccessLayer\" />
     <Folder Include="UserInterface\VisualResources\Gfx\" />
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +238,18 @@
     <Resource Include="UserInterface\VisualResources\Images\inactive.png" />
     <Resource Include="UserInterface\VisualResources\Images\resourceitem.png" />
     <Resource Include="UserInterface\VisualResources\Images\triggeritem.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\add_male_user.png" />
+    <Resource Include="UserInterface\VisualResources\Images\remove_male_user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\error.png" />
+    <Resource Include="UserInterface\VisualResources\Images\information.png" />
+    <Resource Include="UserInterface\VisualResources\Images\warning.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

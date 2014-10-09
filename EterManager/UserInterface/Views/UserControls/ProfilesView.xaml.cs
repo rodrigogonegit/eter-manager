@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
+using EterManager.UserInterface.ViewModels;
 
 namespace EterManager.UserInterface.Views.UserControls
 {
@@ -10,6 +12,7 @@ namespace EterManager.UserInterface.Views.UserControls
         public ProfilesView()
         {
             InitializeComponent();
+            //DataContext = ((App)Application.Current).GetInstance<ProfilesVM>();
         }
     }
 }

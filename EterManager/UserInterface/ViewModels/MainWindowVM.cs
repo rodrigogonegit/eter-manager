@@ -49,7 +49,7 @@ namespace EterManager.UserInterface.ViewModels
                     ViewManager.ShowWindow<PackingFiltersView>();
                     break;
                 default:
-                    Logger.Warning("INTERNAL ERROR // CLOSE AND REPORT TO THE AUTHOR");
+                    Logger.Critical(new[] { "INTERNAL_ERROR", "Error at OpenWindowAction with argument:", param });
                     break;
             }
         }

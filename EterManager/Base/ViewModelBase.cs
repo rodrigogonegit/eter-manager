@@ -16,12 +16,7 @@ namespace EterManager.Base
     {
         internal IViewManager ViewManager = ((App)Application.Current).GetInstance<IViewManager>();
         internal ILogger Logger = ((App)Application.Current).GetInstance<ILogger>();
-
-        // Constant values
-        internal static readonly string AppDataPath = "AppData/";
-        internal static readonly string ProfilesPath = AppDataPath + "Profiles/";
-
-
+        internal ILocale Locale = ((App)Application.Current).GetInstance<ILocale>();
 
         #region INPC
         public event PropertyChangedEventHandler PropertyChanged;
@@ -45,7 +40,7 @@ namespace EterManager.Base
         [Conditional("DEBUG")]
         private void _CheckIfPropertyNameExists(String propertyName)
         {
-            Type type = this.GetType();
+            Type type = GetType();
             Debug.Assert(
               type.GetProperty(propertyName) != null,
               propertyName + "property does not exist on object of type : " + type.FullName);
@@ -61,17 +56,14 @@ namespace EterManager.Base
 
                 _CheckIfPropertyNameExists(propertyName);
 
-                var handler = this.PropertyChanged;
+                var handler = PropertyChanged;
                 if (handler != null)
                 {
                     handler(this, new PropertyChangedEventArgs(propertyName));
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         #endregion

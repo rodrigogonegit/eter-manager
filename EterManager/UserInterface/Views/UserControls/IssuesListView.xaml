@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="EterManager.UserInterface.Views.UserControls.IssuesListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="37*"/>
+        </Grid.RowDefinitions>
+        <!-- Show errors -->
+        <ToggleButton HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="82" IsChecked="{Binding IsShowErrors}">
+            <ToggleButton.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\error.png"></Image>
+                    <TextBlock Grid.Column="1" Text="{Binding ErrorCount}"></TextBlock>
+                    <TextBlock Margin="0,0,0,0" Grid.Column="2" Text="Errors"></TextBlock>
+                </Grid>
+            </ToggleButton.Content>
+        </ToggleButton>
+        <!-- Show warnings -->
+        <ToggleButton HorizontalAlignment="Left" Margin="97,10,0,0" VerticalAlignment="Top" Width="105" IsChecked="{Binding IsShowWarnings}">
+            <ToggleButton.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\warning.png"></Image>
+                    <TextBlock Margin="0,0,0,0" Grid.Column="1" Text="{Binding WarningCount}"></TextBlock>
+                    <TextBlock Margin="0,0,0,0" Grid.Column="2" Text="Warnings"></TextBlock>
+                </Grid>
+            </ToggleButton.Content>
+        </ToggleButton>
+        <!-- Show messages -->
+        <ToggleButton HorizontalAlignment="Left" Margin="202,10,0,0" VerticalAlignment="Top" Width="106" IsChecked="{Binding IsShowMessages}">
+            <ToggleButton.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\information.png"></Image>
+                    <TextBlock Margin="0,0,0,0" Grid.Column="1" Text="{Binding MessageCount}"></TextBlock>
+                    <TextBlock Margin="0,0,0,0" Grid.Column="2" Text="Messages"></TextBlock>
+                </Grid>
+            </ToggleButton.Content>
+        </ToggleButton>
+        <ListView ItemsSource="{Binding IssuesList}" Margin="10,0,0.2,0" Grid.Row="1">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Clear issue list" Command="{Binding ClearIssueListCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/UserInterface\VisualResources\Images\error.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image x:Name="image" Source="/UserInterface\VisualResources\Images/information.png" Height="14" Width="14" />
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Severity}" Value="Error" >
+                                            <Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/error.png" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Severity}" Value="Warning" >
+                                            <Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/warning.png" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Description" Width="450" DisplayMemberBinding="{Binding Description}" />
+                        <GridViewColumn Header="Context" DisplayMemberBinding="{Binding Context}" />
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</UserControl>

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents.Serialization;
-using System.Xml.Serialization;
+using System.Diagnostics;
+using System.Windows.Input;
 using EterManager.Base;
 using EterManager.Models;
+using EterManager.Utilities;
 
 namespace EterManager.UserInterface.ViewModels
 {
@@ -15,7 +11,10 @@ namespace EterManager.UserInterface.ViewModels
     {
         #region Fields
 
-        private ClientProfile _profile;
+        private readonly ClientProfile _profile;
+
+        // Commands
+        private readonly RelayCommand _save;
 
         #endregion
 
@@ -24,7 +23,7 @@ namespace EterManager.UserInterface.ViewModels
         /// <summary>
         /// Null argument overload
         /// </summary>
-        public ClientProfileVM() : this(null) { }
+        public ClientProfileVM() : this(new ClientProfile()) { }
 
         /// <summary>
         /// Creates new profile instance
@@ -33,38 +32,41 @@ namespace EterManager.UserInterface.ViewModels
         public ClientProfileVM(ClientProfile profile)
         {
             _profile = profile;
+
+            #region Command Instantiation
+
+            _save = new RelayCommand(p => SaveAction(), p => true);
+
+            #endregion
         }
 
         #endregion
 
         #region Public Methods
 
-        public void Save()
-        {
-            try
-            {
-                // Create file stream
-                using (var writer = new StreamWriter(String.Format("{0}{1}.xml", ProfilesPath, Name)))
-                {
-                    var serializer = new XmlSerializer(typeof(ClientProfile));
-                    serializer.Serialize(writer, _profile);
-                }
-            }
-            catch (InvalidOperationException e)
-            {
-                // TODO: HANDLE EXCEPTION
-                //_profile.Name = "SS";
-                throw;
-            }
-            // TODO: HANDLE ALL EXCEPETIONS THROWN BY CREATION OF FILE
-
-
-        }
         #endregion
 
         #region Commands
 
         #region Command Actions
+
+        public void SaveAction()
+        {
+            try
+            {
+                _profile.Save();
+            }
+                //catch (Exception e)
+                //{
+                //    // Log to file and alert user
+                //    Logger.Critical(new object[] { Locale.GetString("ERROR_SAVING_PROFILE"), e });
+                //    UserInput.ShowMessage(Locale.GetString("ERROR_SAVING_PROFILE"));
+                //}
+            finally
+            {
+                
+            }
+        }
 
         #endregion
 
@@ -73,6 +75,11 @@ namespace EterManager.UserInterface.ViewModels
         #endregion
 
         #region Command Interfaces
+
+        public ICommand SaveCommand
+        {
+            get { return _save; }
+        }
 
         #endregion
 

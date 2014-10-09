@@ -31,6 +31,7 @@ namespace EterManager
             _container = new StandardKernel();
             _container.Bind<IViewManager>().To<ViewManager>().InSingletonScope();
             _container.Bind<ILogger>().To<Logger>().InSingletonScope();
+            _container.Bind<ILocale>().To<Locale>().InSingletonScope();
         }
 
         private void InitializeMainView()
