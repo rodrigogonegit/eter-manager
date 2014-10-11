@@ -19,7 +19,8 @@ namespace EterManager.UserInterface.ViewModels
         #region Fields
 
         // Commands
-        private RelayCommand _clearIssueList;
+        private readonly RelayCommand _clearIssueList;
+        private readonly RelayCommand _copyIssue;
 
         // Fields
         private bool _isShowErrors;
@@ -30,6 +31,7 @@ namespace EterManager.UserInterface.ViewModels
         private int _errorCount;
         private int _messageCount;
 
+        private Issue _selectedIssue;
         #endregion
 
         #region Constructors
@@ -50,9 +52,10 @@ namespace EterManager.UserInterface.ViewModels
             IsShowMessages = true;
             IsShowWarnings = true;
 
-            #region Commands
+            #region Command Instantiation
 
             _clearIssueList = new RelayCommand(p => ClearIssueListAction(), p => true);
+            _copyIssue = new RelayCommand(CopyIssueAction, p => SelectedIssue != null);
 
             #endregion
         }
@@ -120,6 +123,29 @@ namespace EterManager.UserInterface.ViewModels
             IssuesList.Refresh();
         }
 
+        /// <summary>
+        /// Processes all copy issue commands
+        /// </summary>
+        /// <param name="param"></param>
+        private void CopyIssueAction(object param)
+        {
+            if (param == null)
+                throw new NullReferenceException("param");
+
+            switch (param.ToString())
+            {
+                case "ALL":
+                    Clipboard.SetText(String.Format("Context: {0} \n Description: {1} \n Severity: {2}", SelectedIssue.Context, SelectedIssue.Description, SelectedIssue.Severity));
+                    break;
+                case "DESCRIPTION":
+                    Clipboard.SetText(SelectedIssue.Description);
+                    break;
+                case "CONTEXT":
+                    Clipboard.SetText(SelectedIssue.Context);
+                    break;
+            }
+        }
+
         #endregion
 
         #region Command Evaluators
@@ -131,6 +157,11 @@ namespace EterManager.UserInterface.ViewModels
         public ICommand ClearIssueListCommand
         {
             get { return _clearIssueList; }
+        }
+
+        public ICommand CopyIssueCommand
+        {
+            get { return _copyIssue; }
         }
 
         #endregion
@@ -194,6 +225,12 @@ namespace EterManager.UserInterface.ViewModels
         {
             get { return _messageCount; }
             set { SetProperty(ref _messageCount, value, "MessageCount"); }
+        }
+
+        public Issue SelectedIssue
+        {
+            get { return _selectedIssue; }
+            set { SetProperty(ref _selectedIssue, value, "SelectedIssue"); }
         }
         
 

@@ -19,12 +19,13 @@ namespace EterManager.UserInterface.ViewModels
 
         // Profile list
         private ObservableImmutableList<ClientProfileVM> _profileList = new ObservableImmutableList<ClientProfileVM>();
-        private ClientProfileVM _selectedProfile = new ClientProfileVM();
+        private ClientProfileVM _selectedProfile;
 
         // Commands
         private readonly RelayCommand _addProfile;
         private readonly RelayCommand _removeProfile;
         private readonly RelayCommand _selectProfile;
+        private readonly RelayCommand _saveProfile;
 
 
         #endregion
@@ -38,16 +39,16 @@ namespace EterManager.UserInterface.ViewModels
         {
             #region Load Profile List
 
-            var t = new ClientProfile()
-            {
-                Name = "MyNewProfile",
-                IndexExtension = ".eix",
-                PackExtension = ".epk",
-                IndexKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
-                PackKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
-                WorkingDirectory = @"c:\",
-                UnpackDirectory = @"c:\"
-            };
+            //var t = new ClientProfile()
+            //{
+            //    Name = "MyNewProfile",
+            //    IndexExtension = ".eix",
+            //    PackExtension = ".epk",
+            //    IndexKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
+            //    PackKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
+            //    WorkingDirectory = @"c:\",
+            //    UnpackDirectory = @"c:\"
+            //};
 
             // Create serializer
             var deserializer = new XmlSerializer(typeof(ClientProfile));
@@ -60,10 +61,13 @@ namespace EterManager.UserInterface.ViewModels
             // Loop through directory's files
             foreach (var file in new DirectoryInfo(ConstantsBase.ProfilesPath).GetFiles("*.xml"))
             {
-                ProfileList.Add(
-                    new ClientProfileVM(
-                        deserializer.Deserialize(
-                        new StreamReader(file.FullName)) as ClientProfile));
+                using (var stream = new StreamReader(file.FullName))
+                {
+                    ProfileList.Add(
+                        new ClientProfileVM(
+                            deserializer.Deserialize(
+                            stream) as ClientProfile));
+                }
             }
 
             #endregion
@@ -73,6 +77,7 @@ namespace EterManager.UserInterface.ViewModels
             _addProfile = new RelayCommand(p => AddNewProfileAction(), p => true);
             _removeProfile = new RelayCommand(p => RemoveProfileAction(), p => SelectedProfile != null);
             _selectProfile = new RelayCommand(p => SelectProfileAction(), p => SelectedProfile != null);
+            _saveProfile = new RelayCommand(p => SaveProfileAction(), p => SelectedProfile != null);
 
             #endregion
         }
@@ -115,6 +120,9 @@ namespace EterManager.UserInterface.ViewModels
             }
         }
 
+        /// <summary>
+        /// Fires up "SelectedProfile" event using the EventAggregator
+        /// </summary>
         private void SelectProfileAction()
         {
             if (SelectedProfile != null)
@@ -122,6 +130,18 @@ namespace EterManager.UserInterface.ViewModels
                 EventAggregator.Publish(SelectedProfile);
             }
         }
+
+        /// <summary>
+        /// Calls save method on Profile's VM class
+        /// </summary>
+        private void SaveProfileAction()
+        {
+            if (SelectedProfile != null)
+            {
+                SelectedProfile.SaveProfile();
+            }
+        }
+
         #endregion
 
         #region Command Evaluators
@@ -143,6 +163,11 @@ namespace EterManager.UserInterface.ViewModels
         public ICommand SelectProfileCommand
         {
             get { return _selectProfile; }
+        }
+
+        public ICommand SaveCommand
+        {
+            get { return _saveProfile; }
         }
 
         #endregion

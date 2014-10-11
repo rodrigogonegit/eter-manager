@@ -51,9 +51,17 @@
                 </Grid>
             </ToggleButton.Content>
         </ToggleButton>
-        <ListView ItemsSource="{Binding IssuesList}" Margin="10,0,0.2,0" Grid.Row="1">
+        <ListView SelectedItem="{Binding SelectedIssue}" ItemsSource="{Binding IssuesList}" Margin="10,0,0.2,0" Grid.Row="1">
             <ListView.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="Copy">
+                        <MenuItem.Icon>
+                            <Image Source="/UserInterface\VisualResources\Images\copy.png"></Image>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Copy all" Command="{Binding CopyIssueCommand}" CommandParameter="ALL"/>
+                        <MenuItem Header="Copy description" Command="{Binding CopyIssueCommand}" CommandParameter="DESCRIPTION"/>
+                        <MenuItem Header="Copy context" Command="{Binding CopyIssueCommand}" CommandParameter="CONTEXT"/>
+                    </MenuItem>
                     <MenuItem Header="Clear issue list" Command="{Binding ClearIssueListCommand}">
                         <MenuItem.Icon>
                             <Image Source="/UserInterface\VisualResources\Images\error.png"></Image>

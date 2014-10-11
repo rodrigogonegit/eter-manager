@@ -17,10 +17,9 @@ namespace EterManager.UserInterface.ViewModels
         #region Fields
 
         private readonly ClientProfile _profile;
-        private Dictionary<String, List<String>> errors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<String, List<String>> errors = new Dictionary<string, List<string>>();
 
         // Commands
-        private readonly RelayCommand _save;
 
         #endregion
 
@@ -41,8 +40,6 @@ namespace EterManager.UserInterface.ViewModels
 
             #region Command Instantiation
 
-            _save = new RelayCommand(p => SaveAction(), p => true);
-
             #endregion
         }
 
@@ -50,16 +47,10 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Public Methods
 
-        #endregion
-
-        #region Commands
-
-        #region Command Actions
-
         /// <summary>
-        /// Saves profile to file
+        /// Saves current profile to file
         /// </summary>
-        public void SaveAction()
+        public void SaveProfile()
         {
             try
             {
@@ -71,7 +62,17 @@ namespace EterManager.UserInterface.ViewModels
                 Name = _profile.OriginalName;
                 UserInput.ShowMessage("PROFILE_NAME_ALREADY_EXISTS");
             }
+            catch (IOException e)
+            {
+                Logger.Error("COULD_NOT_ACCESS_FILE", String.Format("{0}{1}.xml", ConstantsBase.ProfilesPath, Name), e.Message);
+            }
         }
+
+        #endregion
+
+        #region Commands
+
+        #region Command Actions
 
         #endregion
 
@@ -80,11 +81,6 @@ namespace EterManager.UserInterface.ViewModels
         #endregion
 
         #region Command Interfaces
-
-        public ICommand SaveCommand
-        {
-            get { return _save; }
-        }
 
         #endregion
 

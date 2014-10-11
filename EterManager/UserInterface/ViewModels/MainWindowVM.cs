@@ -26,6 +26,7 @@ namespace EterManager.UserInterface.ViewModels
         public MainViewModel()
         {
             _openWindow = new RelayCommand(OpenWindowAction, param => true);
+            EventAggregator.Subscribe(this);
         }
 
         #endregion
@@ -88,7 +89,7 @@ namespace EterManager.UserInterface.ViewModels
         public ClientProfileVM SelectedProfile
         {
             get { return _selectedProfile; }
-            set { SetProperty(ref _selectedProfile, value, "SelectedProperty"); }
+            set { SetProperty(ref _selectedProfile, value, "SelectedProfile"); }
         }
 
         #endregion

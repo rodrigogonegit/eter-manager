@@ -257,6 +257,9 @@
     <Resource Include="UserInterface\VisualResources\Images\accept_male_user.png" />
     <Resource Include="UserInterface\VisualResources\Images\clock.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\copy.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if  $(ConfigurationName) == Debug "$(SolutionDir)vbinc.exe" -af4

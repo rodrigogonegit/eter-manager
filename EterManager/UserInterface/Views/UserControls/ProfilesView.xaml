@@ -78,7 +78,7 @@
                 <TextBox Height="23" Margin="6.2,190,10,0" TextWrapping="Wrap" Text="{Binding SelectedProfile.PackExtension}" VerticalAlignment="Top" Grid.Column="1"/>
                 <TextBlock HorizontalAlignment="Left" Margin="10,193,0,0" TextWrapping="Wrap" Text="Pack Extension" VerticalAlignment="Top"/>
                 <!-- Save button -->
-                <Button Command="{Binding SelectedProfile.SaveCommand}"  Grid.Column="0" Content="Save settings" HorizontalAlignment="Left" Margin="10,0,0,-0.2" Width="117" Grid.ColumnSpan="2" Height="21" VerticalAlignment="Bottom"/>
+                <Button Command="{Binding SaveCommand}"  Grid.Column="0" Content="Save settings" HorizontalAlignment="Left" Margin="10,0,0,-0.2" Width="117" Grid.ColumnSpan="2" Height="21" VerticalAlignment="Bottom"/>
             </Grid>
         </GroupBox>
     </Grid>
