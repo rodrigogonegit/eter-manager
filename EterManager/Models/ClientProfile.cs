@@ -45,7 +45,10 @@ namespace EterManager.Models
         #region Methods
 
         public void Save()
-        {
+        {            
+            if (!IsUniqueName())
+                throw new ProfileNameAlreadyExistsException(Name);
+
             // Rename file if necessary
             if (OriginalName != Name)
             {
@@ -64,6 +67,13 @@ namespace EterManager.Models
             }
 
         }
+
+        public bool IsUniqueName(string name = null)
+        {
+            // Check if profile with the same name exists
+            return !File.Exists(String.Format("{0}{1}.xml", ConstantsBase.ProfilesPath, name ?? Name)) || OriginalName == Name;
+        }
+
         #endregion
 
         #region Constructors

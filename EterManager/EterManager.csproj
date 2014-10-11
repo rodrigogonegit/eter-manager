@@ -74,6 +74,7 @@
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
     <Compile Include="Converters\ByteArrayToHexStringConverter.cs" />
+    <Compile Include="Exceptions\Profile\ProfileNameAlreadyExistsException.cs" />
     <Compile Include="Models\ClientProfile.cs" />
     <Compile Include="Models\Abstract\ITreeItem.cs" />
     <Compile Include="Models\Issue.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="UserInterface\ViewModels\ClientProfileVM.cs" />
     <Compile Include="UserInterface\ViewModels\IssuesListViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\MainWindowVM.cs" />
-    <Compile Include="UserInterface\ViewModels\ProfileManagerVM.cs" />
     <Compile Include="UserInterface\ViewModels\ProfilesVM.cs" />
     <Compile Include="UserInterface\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -127,6 +127,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\StringHelpers.cs" />
     <Compile Include="Utilities\UserInput.cs" />
     <Page Include="UserInterface\Views\MainView.xaml">
       <SubType>Designer</SubType>

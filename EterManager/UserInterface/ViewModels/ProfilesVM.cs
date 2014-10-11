@@ -22,7 +22,7 @@ namespace EterManager.UserInterface.ViewModels
         private ClientProfileVM _selectedProfile = new ClientProfileVM();
 
         // Commands
-        private readonly RelayCommand _addNewProfile;
+        private readonly RelayCommand _addProfile;
         private readonly RelayCommand _removeProfile;
 
 
@@ -69,7 +69,7 @@ namespace EterManager.UserInterface.ViewModels
 
             #region Command Instantiation
 
-            _addNewProfile = new RelayCommand(p => AddNewProfileAction(), p => true);
+            _addProfile = new RelayCommand(p => AddNewProfileAction(), p => true);
             _removeProfile = new RelayCommand(p => RemoveProfileAction(), p => CanExecuteRemoveProfile());
 
             #endregion
@@ -81,14 +81,36 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Command Actions
 
+        /// <summary>
+        /// Adds new profile to the list
+        /// </summary>
         private void AddNewProfileAction()
         {
-            
+            // Check if there is a blank profile already, if so select it
+            ClientProfileVM outProfile = ProfileList.FirstOrDefault(x => x.Name == null);
+
+            if (outProfile != null)
+            {
+                SelectedProfile = outProfile;
+            }
+            else
+            {
+                ProfileList.Add(
+                    new ClientProfileVM(
+                        new ClientProfile())
+                    );
+            }
         }
 
+        /// <summary>
+        /// Removes selected profile from the list
+        /// </summary>
         private void RemoveProfileAction()
         {
-
+            if (SelectedProfile != null)
+            {
+                ProfileList.Remove(SelectedProfile);
+            }
         }
 
         #endregion
@@ -104,9 +126,9 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Command Interfaces
 
-        public ICommand AddNewProfileCommand
+        public ICommand AddProfileCommand
         {
-            get { return _addNewProfile; }
+            get { return _addProfile; }
         }
 
         public ICommand RemoveProfileCommand

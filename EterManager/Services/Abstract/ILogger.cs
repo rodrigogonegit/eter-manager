@@ -25,7 +25,7 @@ namespace EterManager.Services
         /// <param name="key"></param>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        void Debug(string key, string context, params object[] data);
+        void Information(string key, string context, params object[] data);
 
         /// <summary>
         /// Creates waring level message

@@ -6,8 +6,43 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/EterManager;component/UserInterface/VisualResources/EterManager.xaml" />
+                
+                
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="Control" x:Key="myErrorTemplate">
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <DockPanel LastChildFill="True">
+                                <TextBlock DockPanel.Dock="Right" 
+                        Foreground="Red"
+                        FontSize="11pt" 
+                        FontWeight="Bold">*
+                                </TextBlock>
+                                <Border BorderBrush="Red" BorderThickness="1">
+                                    <AdornedElementPlaceholder Name="myControl"/>
+                                </Border>
+                            </DockPanel>
+                        </ControlTemplate>
+                        
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="true">
+                        <Setter Property="ToolTip"
+                Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                Path=(Validation.Errors)[0].ErrorContent}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="TextBox" BasedOn="{StaticResource myErrorTemplate}" />
+            <Style TargetType="CheckBox" BasedOn="{StaticResource myErrorTemplate}" />
+            <Style TargetType="ComboBox" BasedOn="{StaticResource myErrorTemplate}" />
         </ResourceDictionary>
+
+
     </Application.Resources>
 </Application>
 <!--<ResourceDictionary Source="/EterManager;component/UserInterface/VisualResources/EterManager.xaml" />-->

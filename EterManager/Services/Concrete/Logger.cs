@@ -41,8 +41,10 @@ namespace EterManager.Services.Concrete
 
         #region ILogger Members
 
-        public void Debug(string key, string context, params object[] data)
+        public void Information(string key, string context, params object[] data)
         {
+            context = context ?? "Application";
+
             Issues.Add(
                 new Issue(
                     IssueSeverity.Message,

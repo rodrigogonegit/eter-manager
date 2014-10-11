@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using EterManager.Base;
 using EterManager.UserInterface.Views;
 using EterManager.Utilities;
-using EterManager.Services;
 
 namespace EterManager.UserInterface.ViewModels
 {
@@ -35,6 +29,10 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Command Actions
 
+        /// <summary>
+        /// Called by all "Open Window" actions
+        /// </summary>
+        /// <param name="param"></param>
         private void OpenWindowAction(object param)
         {
             switch (param.ToString())
