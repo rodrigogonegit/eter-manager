@@ -27,7 +27,11 @@ namespace EterManager.UserInterface.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = ((App)Application.Current).GetInstance<ProfilesVM>();
+            // To avoid design-time issues
+            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
+            {
+                DataContext = ((App)Application.Current).GetInstance<ProfilesVM>();
+            }
         }
     }
 }

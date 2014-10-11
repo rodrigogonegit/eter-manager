@@ -1,4 +1,5 @@
-﻿using EterManager.Services;
+﻿using Caliburn.Micro;
+using EterManager.Services;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
 using EterManager.UserInterface.Views;
@@ -32,6 +33,7 @@ namespace EterManager
             _container.Bind<IViewManager>().To<ViewManager>().InSingletonScope();
             _container.Bind<ILogger>().To<Logger>().InSingletonScope();
             _container.Bind<ILocale>().To<Locale>().InSingletonScope();
+            _container.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
         }
 
         private void InitializeMainView()

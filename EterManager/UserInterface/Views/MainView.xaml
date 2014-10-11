@@ -21,6 +21,11 @@
                 <MenuItem Header="Packing filters" Command="{Binding OpenWindowCommand}" CommandParameter="PACKING_FILTERS"/>
             </MenuItem>
         </Menu>
-        <UserControls:IssuesListView Grid.ColumnSpan="2" Margin="0,0,9.4,9.4" Grid.RowSpan="2" Height="162" VerticalAlignment="Bottom"/>
+        <UserControls:IssuesListView Grid.ColumnSpan="2" Margin="0,0,9,29" Grid.RowSpan="2" Height="142" VerticalAlignment="Bottom"/>
+        <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding CurrentlySelectedProfile.Name}"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,9 @@ namespace EterManager.UserInterface.ViewModels
         /// </summary>
         public IssuesListViewModel()
         {
+            if (Process.GetCurrentProcess().IsVisualStudioDesigner())
+                return;
+
             IssuesList = CollectionViewSource.GetDefaultView(Logger.Issues);
             IssuesList.Filter = FilterCollection;
             Logger.IssuesChanged += IssuesChanged;

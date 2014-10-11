@@ -12,7 +12,6 @@ namespace EterManager.UserInterface.Views.UserControls
         public ProfilesView()
         {
             InitializeComponent();
-            //DataContext = ((App)Application.Current).GetInstance<ProfilesVM>();
         }
     }
 }

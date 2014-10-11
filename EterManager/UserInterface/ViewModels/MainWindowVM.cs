@@ -1,15 +1,20 @@
 ﻿using System.Windows.Input;
+using Caliburn.Micro;
 using EterManager.Base;
 using EterManager.UserInterface.Views;
 using EterManager.Utilities;
 
 namespace EterManager.UserInterface.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase, IHandle<ClientProfileVM>
     {
         #region Fields
 
+        // Commands
         private readonly RelayCommand _openWindow;
+
+        // Fields
+        private ClientProfileVM _selectedProfile;
 
         #endregion
 
@@ -77,11 +82,34 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Presentation Members
 
+        /// <summary>
+        /// Holds reference to the selected profile, assigned when ProfilesVM fires up the event
+        /// </summary>
+        public ClientProfileVM SelectedProfile
+        {
+            get { return _selectedProfile; }
+            set { SetProperty(ref _selectedProfile, value, "SelectedProperty"); }
+        }
+
         #endregion
 
         #region Others
 
         #endregion
+
+        #endregion
+
+        #region IHandle<ClientProfileVM> Members
+
+        /// <summary>
+        /// Updates selected profile
+        /// </summary>
+        /// <param name="message"></param>
+        public void Handle(ClientProfileVM message)
+        {
+            // TODO: Handler not firing up, event is published but subscriber does not respond
+            SelectedProfile = message;
+        }
 
         #endregion
 

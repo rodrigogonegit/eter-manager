@@ -24,6 +24,7 @@ namespace EterManager.UserInterface.ViewModels
         // Commands
         private readonly RelayCommand _addProfile;
         private readonly RelayCommand _removeProfile;
+        private readonly RelayCommand _selectProfile;
 
 
         #endregion
@@ -70,7 +71,8 @@ namespace EterManager.UserInterface.ViewModels
             #region Command Instantiation
 
             _addProfile = new RelayCommand(p => AddNewProfileAction(), p => true);
-            _removeProfile = new RelayCommand(p => RemoveProfileAction(), p => CanExecuteRemoveProfile());
+            _removeProfile = new RelayCommand(p => RemoveProfileAction(), p => SelectedProfile != null);
+            _selectProfile = new RelayCommand(p => SelectProfileAction(), p => SelectedProfile != null);
 
             #endregion
         }
@@ -113,14 +115,16 @@ namespace EterManager.UserInterface.ViewModels
             }
         }
 
+        private void SelectProfileAction()
+        {
+            if (SelectedProfile != null)
+            {
+                EventAggregator.Publish(SelectedProfile);
+            }
+        }
         #endregion
 
         #region Command Evaluators
-
-        private bool CanExecuteRemoveProfile()
-        {
-            return SelectedProfile != null;
-        }
 
         #endregion
 
@@ -134,6 +138,11 @@ namespace EterManager.UserInterface.ViewModels
         public ICommand RemoveProfileCommand
         {
             get { return _removeProfile; }
+        }
+
+        public ICommand SelectProfileCommand
+        {
+            get { return _selectProfile; }
         }
 
         #endregion

@@ -6,9 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Caliburn.Micro;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
 using EterManager.Services;
+using EterManager.UserInterface.ViewModels;
 
 namespace EterManager.Base
 {
@@ -17,6 +19,7 @@ namespace EterManager.Base
         internal IViewManager ViewManager = ((App)Application.Current).GetInstance<IViewManager>();
         internal ILogger Logger = ((App)Application.Current).GetInstance<ILogger>();
         internal ILocale Locale = ((App)Application.Current).GetInstance<ILocale>();
+        internal IEventAggregator EventAggregator = ((App)Application.Current).GetInstance<IEventAggregator>();
 
         #region INPC
         public event PropertyChangedEventHandler PropertyChanged;

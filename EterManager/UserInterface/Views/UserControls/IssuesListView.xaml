@@ -70,10 +70,10 @@
                                     <Image x:Name="image" Source="/UserInterface\VisualResources\Images/information.png" Height="14" Width="14" />
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Severity}" Value="Error" >
-                                            <Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/error.png" />
+                                            <!--<Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/error.png" />-->
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Severity}" Value="Warning" >
-                                            <Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/warning.png" />
+                                            <!--<Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images\warning.png" />-->
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>

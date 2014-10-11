@@ -122,6 +122,7 @@
     <Compile Include="UserInterface\Views\UserControls\SearchableTreeView.xaml.cs">
       <DependentUpon>SearchableTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -251,6 +252,10 @@
     <Resource Include="UserInterface\VisualResources\Images\error.png" />
     <Resource Include="UserInterface\VisualResources\Images\information.png" />
     <Resource Include="UserInterface\VisualResources\Images\warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\accept_male_user.png" />
+    <Resource Include="UserInterface\VisualResources\Images\clock.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

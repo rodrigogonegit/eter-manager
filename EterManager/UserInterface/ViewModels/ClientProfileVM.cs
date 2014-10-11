@@ -12,7 +12,7 @@ using EterManager.Utilities;
 
 namespace EterManager.UserInterface.ViewModels
 {
-    class ClientProfileVM : ViewModelBase, INotifyDataErrorInfo
+    public class ClientProfileVM : ViewModelBase, INotifyDataErrorInfo
     {
         #region Fields
 

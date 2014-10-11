@@ -23,7 +23,12 @@ namespace EterManager.UserInterface.Views
         public MainView()
         {
             InitializeComponent();
-            DataContext = ((App)Application.Current).GetInstance<MainViewModel>();
+
+            // To avoid design-time issues
+            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
+            {
+                DataContext = ((App)Application.Current).GetInstance<MainViewModel>();
+            }
         }
     }
 }

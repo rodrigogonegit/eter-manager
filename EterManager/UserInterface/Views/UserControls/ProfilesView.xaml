@@ -31,6 +31,11 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="Use selected profile" Command="{Binding SelectProfileCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/UserInterface\VisualResources\Images\accept_male_user.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="Add user" Command="{Binding AddProfileCommand}">
                         <MenuItem.Icon>
                             <Image Source="/UserInterface\VisualResources\Images\add_male_user.png"></Image>
