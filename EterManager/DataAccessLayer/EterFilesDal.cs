@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using EterManager.Base;
 using EterManager.Models;
+using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
 using EterManager.Utilities;
 
@@ -13,6 +15,9 @@ namespace EterManager.DataAccessLayer
 {
     class EterFilesDal
     {
+        private static IDrivePointManager _drivePointManager =
+            ((App) Application.Current).GetInstance<IDrivePointManager>();
+
         public static void UnpackFile(
             FileInfo packFile,
             string saveFilesPath,
@@ -133,7 +138,7 @@ namespace EterManager.DataAccessLayer
             }
 
             //Check hashes
-            if (!CompareCRCHashes(rawFileBuffer, item.CRCHash))
+            if (!CompareCrcHashes(rawFileBuffer, item.CRCHash))
             {
                 //Log CRC mismatch
                 fileLoggingCallback(null, item.Filename);
@@ -238,7 +243,7 @@ namespace EterManager.DataAccessLayer
             byte[] decompressedDataBuffer = LzoHelper.DecompressData(decompressedSize, compressedSize, rawFileBuffer);
 
             // Check hash
-            if (!CompareCRCHashes(decompressedDataBuffer, item.CRCHash))
+            if (!CompareCrcHashes(decompressedDataBuffer, item.CRCHash))
             {
                 // Log CRC mismatch
                 fileLoggingCallback(null, item.Filename);
@@ -370,7 +375,7 @@ namespace EterManager.DataAccessLayer
             Array.Copy(decryptedBuffer, 4, decryptedBufferWithoutHeader, 0, decryptedBuffer.Length - 4);
 
             // Check hash
-            if (!CompareCRCHashes(decryptedBufferWithoutHeader, item.CRCHash))
+            if (!CompareCrcHashes(decryptedBufferWithoutHeader, item.CRCHash))
             {
                 // Log CRC mismatch
                 // AppLog.SendMessage(2, item.Filename);
@@ -691,7 +696,7 @@ namespace EterManager.DataAccessLayer
                         #region Building index file
 
                         // Check if string replacment is needed
-                        //string virtualPathFile = DPHelper.InsertDrivePoints(item.Filename); TODO
+                        string virtualPathFile = _drivePointManager.InsertDrivePoints(item.Filename);
 
                         // Populate byte[] with data
                         fileIndex = BitConverter.GetBytes(item.Index);
@@ -799,7 +804,7 @@ namespace EterManager.DataAccessLayer
         /// <returns></returns>
         private static int GetUpperMultiple(int number)
         {
-            int v = (int)Math.Ceiling((number / (double)8)) * 8;
+            var v = (int)Math.Ceiling((number / (double)8)) * 8;
             return v;
         }
 
@@ -809,7 +814,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="toComputeData">Actual hash</param>
         /// <param name="expectedHash">To be expetected hash</param>
         /// <returns></returns>
-        private static bool CompareCRCHashes(byte[] toComputeData, string expectedHash)
+        private static bool CompareCrcHashes(byte[] toComputeData, string expectedHash)
         {
             return (int.Parse(CrcHelper.GetCrc32HashFromMemoryToString(toComputeData).ToLower(), System.Globalization.NumberStyles.HexNumber) == int.Parse(expectedHash.ToLower(), System.Globalization.NumberStyles.HexNumber));
         }

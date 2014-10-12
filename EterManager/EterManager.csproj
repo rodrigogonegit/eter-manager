@@ -74,6 +74,7 @@
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
     <Compile Include="Converters\ByteArrayToHexStringConverter.cs" />
+    <Compile Include="DataAccessLayer\DrivePointsDal.cs" />
     <Compile Include="DataAccessLayer\EterFilesDal.cs" />
     <Compile Include="Exceptions\Profile\ProfileNameAlreadyExistsException.cs" />
     <Compile Include="Models\ClientProfile.cs" />
@@ -82,9 +83,11 @@
     <Compile Include="Models\IndexItem.cs" />
     <Compile Include="Models\Issue.cs" />
     <Compile Include="Models\TreeItem.cs" />
+    <Compile Include="Services\Abstract\IDrivePointManager.cs" />
     <Compile Include="Services\Abstract\ILocale.cs" />
     <Compile Include="Services\Abstract\ILogger.cs" />
     <Compile Include="Services\Abstract\IViewManager.cs" />
+    <Compile Include="Services\Concrete\DrivePointManager.cs" />
     <Compile Include="Services\Concrete\Locale.cs" />
     <Compile Include="Services\Concrete\Logger.cs" />
     <Compile Include="Services\Concrete\ViewManager.cs" />

@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using EterManager.Services.Abstract;
-using EterManager.Services.Concrete;
 using EterManager.Services;
-using EterManager.UserInterface.ViewModels;
 
 namespace EterManager.Base
 {

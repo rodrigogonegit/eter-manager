@@ -34,6 +34,7 @@ namespace EterManager.Services
         private void Initialize()
         {
             //_localeTokens.Add("", "");
+            _localeTokens.Add("NEW_DRIVE_POINT_ADDED", "New drive point found and saved: {0}!");
             _localeTokens.Add("PROFILE_SAVED", "Profile {0} saved!");
             _localeTokens.Add("COULD_NOT_ACCESS_FILE", "Could not access file. {0}");
             _localeTokens.Add("ERROR_SAVING_PROFILE", "An error occured while saving {0} profile.");
