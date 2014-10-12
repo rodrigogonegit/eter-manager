@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,17 @@ namespace EterManager.Utilities
                 str = "." + str;
             }
             return str;
+        }
+
+        /// <summary>
+        /// Removes the extension from the filename
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static string TrimExtension(string fileName)
+        {
+            return String.IsNullOrWhiteSpace(fileName) ? 
+                String.Empty : Path.GetFileNameWithoutExtension(fileName);
         }
     }
 }

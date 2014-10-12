@@ -74,9 +74,12 @@
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
     <Compile Include="Converters\ByteArrayToHexStringConverter.cs" />
+    <Compile Include="DataAccessLayer\EterFilesDal.cs" />
     <Compile Include="Exceptions\Profile\ProfileNameAlreadyExistsException.cs" />
     <Compile Include="Models\ClientProfile.cs" />
     <Compile Include="Models\Abstract\ITreeItem.cs" />
+    <Compile Include="Models\ErrorFile.cs" />
+    <Compile Include="Models\IndexItem.cs" />
     <Compile Include="Models\Issue.cs" />
     <Compile Include="Models\TreeItem.cs" />
     <Compile Include="Services\Abstract\ILocale.cs" />
@@ -122,7 +125,11 @@
     <Compile Include="UserInterface\Views\UserControls\SearchableTreeView.xaml.cs">
       <DependentUpon>SearchableTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CrcHelper.cs" />
+    <Compile Include="Utilities\EterHelper.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\IOHelper.cs" />
+    <Compile Include="Utilities\LzoHelper.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -130,6 +137,7 @@
     </Compile>
     <Compile Include="Utilities\StringHelpers.cs" />
     <Compile Include="Utilities\UserInput.cs" />
+    <Compile Include="Utilities\Xtea.cs" />
     <Page Include="UserInterface\Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -232,7 +240,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataAccessLayer\" />
     <Folder Include="UserInterface\VisualResources\Gfx\" />
   </ItemGroup>
   <ItemGroup>

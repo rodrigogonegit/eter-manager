@@ -108,8 +108,8 @@ namespace EterManager.UserInterface.ViewModels
         /// <param name="message"></param>
         public void Handle(ClientProfileVM message)
         {
-            // TODO: Handler not firing up, event is published but subscriber does not respond
             SelectedProfile = message;
+            EterHelper.SelectedProfile = message;
         }
 
         #endregion

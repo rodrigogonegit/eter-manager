@@ -17,7 +17,7 @@ namespace EterManager.UserInterface.ViewModels
         #region Fields
 
         private readonly ClientProfile _profile;
-        private readonly Dictionary<String, List<String>> errors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<String, List<String>> _errors = new Dictionary<string, List<string>>();
 
         // Commands
 
@@ -201,8 +201,22 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Custom Validation
 
+        /// <summary>
+        /// VAlidates Name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private bool IsNameValid(string name)
         {
+            if (name.Trim() == "")
+            {
+                AddError("Name", "Name cannot be null.", false);
+                return false;
+            }
+
+            // If so, then try to remove
+            RemoveError("Name", "Name cannot be null");
+
             var isUnique = _profile.IsUniqueName(name);
 
             if (!isUnique)
@@ -281,13 +295,13 @@ namespace EterManager.UserInterface.ViewModels
         /// <param name="isWarning"></param>
         public void AddError(string propertyName, string error, bool isWarning)
         {
-            if (!errors.ContainsKey(propertyName))
-                errors[propertyName] = new List<string>();
+            if (!_errors.ContainsKey(propertyName))
+                _errors[propertyName] = new List<string>();
 
-            if (!errors[propertyName].Contains(error))
+            if (!_errors[propertyName].Contains(error))
             {
-                if (isWarning) errors[propertyName].Add(error);
-                else errors[propertyName].Insert(0, error);
+                if (isWarning) _errors[propertyName].Add(error);
+                else _errors[propertyName].Insert(0, error);
                 RaiseErrorsChanged(propertyName);
             }
         }
@@ -301,11 +315,11 @@ namespace EterManager.UserInterface.ViewModels
         /// <param name="error"></param>
         public void RemoveError(string propertyName, string error)
         {
-            if (errors.ContainsKey(propertyName) &&
-                errors[propertyName].Contains(error))
+            if (_errors.ContainsKey(propertyName) &&
+                _errors[propertyName].Contains(error))
             {
-                errors[propertyName].Remove(error);
-                if (errors[propertyName].Count == 0) errors.Remove(propertyName);
+                _errors[propertyName].Remove(error);
+                if (_errors[propertyName].Count == 0) _errors.Remove(propertyName);
                 RaiseErrorsChanged(propertyName);
             }
         }
@@ -327,13 +341,13 @@ namespace EterManager.UserInterface.ViewModels
         public System.Collections.IEnumerable GetErrors(string propertyName)
         {
             if (String.IsNullOrEmpty(propertyName) ||
-                !errors.ContainsKey(propertyName)) return null;
-            return errors[propertyName];
+                !_errors.ContainsKey(propertyName)) return null;
+            return _errors[propertyName];
         }
 
         public bool HasErrors
         {
-            get { return errors.Count > 0; }
+            get { return _errors.Count > 0; }
         }
 
         #endregion
