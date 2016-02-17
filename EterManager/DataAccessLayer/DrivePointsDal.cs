@@ -14,7 +14,7 @@ namespace EterManager.DataAccessLayer
         {
             var toRtn = new Dictionary<string, string>();
 
-            using (var sReader = new StreamReader("appSettings/dp.settings"))
+            using (var sReader = new StreamReader("AppData/dp.settings"))
             {
                 string currentLine;
 
@@ -37,7 +37,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="toAdd"></param>
         public static void AddDrivePoint(string toAdd)
         {
-            using (var sWritter = File.AppendText("appSettings/dp.settings"))
+            using (var sWritter = File.AppendText("AppData/dp.settings"))
             {
                 sWritter.WriteLine(Environment.NewLine + toAdd);
             }

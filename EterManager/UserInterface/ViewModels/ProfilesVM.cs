@@ -13,73 +13,88 @@ using ObservableImmutable;
 
 namespace EterManager.UserInterface.ViewModels
 {
-    class ProfilesVM : ViewModelBase
+    class ProfilesVm : ViewModelBase
     {
         #region Fields
 
-        // Profile list
-        private ObservableImmutableList<ClientProfileVM> _profileList = new ObservableImmutableList<ClientProfileVM>();
-        private ClientProfileVM _selectedProfile;
+        /// <summary>
+        /// AddProfileCommand RelayCommand obj
+        /// </summary>
+        private RelayCommand _addProfile;
 
-        // Commands
-        private readonly RelayCommand _addProfile;
-        private readonly RelayCommand _removeProfile;
-        private readonly RelayCommand _selectProfile;
-        private readonly RelayCommand _saveProfile;
+        /// <summary>
+        /// RemoteProfileCommand RelayCommand obj
+        /// </summary>
+        private RelayCommand _removeProfile;
 
+        /// <summary>
+        /// SelectProfile RelayCommand obj
+        /// </summary>
+        private RelayCommand _selectProfile;
+
+        /// <summary>
+        /// SaveProfile RelayCommand obj
+        /// </summary>
+        private RelayCommand _saveProfile;
 
         #endregion
 
-        #region Constructors
+        #region Constructors & Initializers
 
         /// <summary>
         /// Instantiates new object of class
         /// </summary>
-        public ProfilesVM()
+        public ProfilesVm()
         {
-            #region Load Profile List
+            Instance = this;
+            ProfileList = new ObservableImmutableList<ClientProfileVm>();
 
-            //var t = new ClientProfile()
-            //{
-            //    Name = "MyNewProfile",
-            //    IndexExtension = ".eix",
-            //    PackExtension = ".epk",
-            //    IndexKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
-            //    PackKey = new byte[] { 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, 0xB5, },
-            //    WorkingDirectory = @"c:\",
-            //    UnpackDirectory = @"c:\"
-            //};
+            Initialize();
+            InitializeCommands();
+        }
 
-            // Create serializer
-            var deserializer = new XmlSerializer(typeof(ClientProfile));
+        private void Initialize()
+        {
+            // Load list
+            ProfileList =
+                new ObservableImmutableList<ClientProfileVm>(
+                    ClientProfile.GetAllProfiles().Select(x => new ClientProfileVm(x)));
 
-            //using (StreamWriter writer = new StreamWriter("AppData/Profiles/MyNewProfile.xml"))
-            //{
-            //    deserializer.Serialize(writer, t);
-            //}
-
-            // Loop through directory's files
-            foreach (var file in new DirectoryInfo(ConstantsBase.ProfilesPath).GetFiles("*.xml"))
+            if (MainWindowVm.Instance.SelectedWorkingProfile != null)
             {
-                using (var stream = new StreamReader(file.FullName))
-                {
-                    ProfileList.Add(
-                        new ClientProfileVM(
-                            deserializer.Deserialize(
-                            stream) as ClientProfile));
-                }
+                SelectedProfile = MainWindowVm.Instance.SelectedWorkingProfile;
             }
+            else if (ProfileList == null || ProfileList.Count == 0)
+            {
+                SelectedProfile = new ClientProfileVm()
+                {
+                    Name = "Default Profile",
+                    IndexKey = new byte[] { 0xB9, 0x9E, 0xB0, 0x02, 0x6F, 0x69, 0x81, 0x05, 0x63, 0x98, 0x9B, 0x28, 0x79, 0x18, 0x1A, 0x00 },
+                    PackKey = new byte[] { 0x22, 0xB8, 0xB4, 0x04, 0x64, 0xB2, 0x6E, 0x1F, 0xAE, 0xEA, 0x18, 0x00, 0xA6, 0xF6, 0xFB, 0x1C },
+                    PackExtension = ".epk",
+                    IndexExtension = ".eix",
+                    WorkingDirectory = "WORKING_DIR",
+                    UnpackDirectory = "UNPACK_DIR"
+                };
 
-            #endregion
+                ProfileList.Add(SelectedProfile);
+            }
+            else
+            {
+                SelectedProfile = ProfileList.FirstOrDefault(x => x.IsDefault) ?? ProfileList.First();
 
-            #region Command Instantiation
+            }
+        }
 
+        /// <summary>
+        /// Initializes all commands
+        /// </summary>
+        private void InitializeCommands()
+        {
             _addProfile = new RelayCommand(p => AddNewProfileAction(), p => true);
             _removeProfile = new RelayCommand(p => RemoveProfileAction(), p => SelectedProfile != null);
             _selectProfile = new RelayCommand(p => SelectProfileAction(), p => SelectedProfile != null);
             _saveProfile = new RelayCommand(p => SaveProfileAction(), p => SelectedProfile != null);
-
-            #endregion
         }
 
         #endregion
@@ -94,7 +109,7 @@ namespace EterManager.UserInterface.ViewModels
         private void AddNewProfileAction()
         {
             // Check if there is a blank profile already, if so select it
-            ClientProfileVM outProfile = ProfileList.FirstOrDefault(x => x.Name == null);
+            ClientProfileVm outProfile = ProfileList.FirstOrDefault(x => x.Name == null || x.Name == "Default Profile");
 
             if (outProfile != null)
             {
@@ -102,10 +117,19 @@ namespace EterManager.UserInterface.ViewModels
             }
             else
             {
-                ProfileList.Add(
-                    new ClientProfileVM(
-                        new ClientProfile())
-                    );
+                var profile = new ClientProfileVm()
+                {
+                    Name = "Default Profile",
+                    IndexKey = new byte[] { 0xB9, 0x9E, 0xB0, 0x02, 0x6F, 0x69, 0x81, 0x05, 0x63, 0x98, 0x9B, 0x28, 0x79, 0x18, 0x1A, 0x00 },
+                    PackKey = new byte[] { 0x22, 0xB8, 0xB4, 0x04, 0x64, 0xB2, 0x6E, 0x1F, 0xAE, 0xEA, 0x18, 0x00, 0xA6, 0xF6, 0xFB, 0x1C },
+                    PackExtension = ".epk",
+                    IndexExtension = ".eix",
+                    WorkingDirectory = "WORKING_DIR",
+                    UnpackDirectory = "UNPACK_DIR"
+                };
+
+                ProfileList.Add(profile);
+                SelectedProfile = profile;
             }
         }
 
@@ -116,18 +140,30 @@ namespace EterManager.UserInterface.ViewModels
         {
             if (SelectedProfile != null)
             {
+                if (MainWindowVm.Instance.SelectedWorkingProfile != null &&
+                    SelectedProfile.Name == MainWindowVm.Instance.SelectedWorkingProfile.Name)
+                {
+                    FilesActionVm.Instance.WorkingItemsList.Clear();
+                    FilesActionVm.Instance.StopMonitoringDirectory();
+                    MainWindowVm.Instance.SelectedWorkingProfile = null;
+                }
+
+                SelectedProfile.RemoveProfile();
                 ProfileList.Remove(SelectedProfile);
+                MainWindowVm.Instance.UpdateProfileListFromProfilesWindow(ProfileList);
             }
         }
 
         /// <summary>
-        /// Fires up "SelectedProfile" event using the EventAggregator
+        /// Fires up "SelectedWorkingProfile" event using the EventAggregator
         /// </summary>
         private void SelectProfileAction()
         {
-            if (SelectedProfile != null)
+            if (SelectedProfile != null && !SelectedProfile.HasErrors)
             {
                 EventAggregator.Publish(SelectedProfile);
+                //MainWindowVm.Instance.SelectedWorkingProfile = SelectedProfile;
+                FilesActionVm.Instance.StartMonitoringDirectory();
             }
         }
 
@@ -138,7 +174,19 @@ namespace EterManager.UserInterface.ViewModels
         {
             if (SelectedProfile != null)
             {
+                if (SelectedProfile.IsDefault)
+                {
+                    foreach (var profile in ProfileList.Where(x => x.Name != SelectedProfile.Name))
+                    {
+                        profile.IsDefault = false;
+                        profile.SaveProfile(false);
+                    }
+
+                    Properties.Settings.Default.DefaultProfile = SelectedProfile.Name;
+                }
+
                 SelectedProfile.SaveProfile();
+                MainWindowVm.Instance.UpdateProfileListFromProfilesWindow(ProfileList);
             }
         }
 
@@ -182,13 +230,23 @@ namespace EterManager.UserInterface.ViewModels
         
         #region Presentation Members
 
-        public ObservableImmutableList<ClientProfileVM> ProfileList
+        private ObservableImmutableList<ClientProfileVm> _profileList;
+
+        /// <summary>
+        /// List of all profiles
+        /// </summary>
+        public ObservableImmutableList<ClientProfileVm> ProfileList
         {
             get { return _profileList; }
             set { SetProperty(ref _profileList, value, "ProfileList"); }
         }
 
-        public ClientProfileVM SelectedProfile
+        private ClientProfileVm _selectedProfile;
+
+        /// <summary>
+        /// The currently selected profile
+        /// </summary>
+        public ClientProfileVm SelectedProfile
         {
             get { return _selectedProfile; }
             set { SetProperty(ref _selectedProfile, value, "SelectedProfile"); }
@@ -197,6 +255,11 @@ namespace EterManager.UserInterface.ViewModels
         #endregion
 
         #region Others
+
+        /// <summary>
+        /// Static reference to the instance
+        /// </summary>
+        public static ProfilesVm Instance { get; set; }
 
         #endregion
 

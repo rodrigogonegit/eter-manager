@@ -9,6 +9,7 @@ using EterManager.Services;
 
 namespace EterManager.Base
 {
+
     public class ViewModelBase : INotifyPropertyChanged
     {
         internal IViewManager ViewManager = ((App)Application.Current).GetInstance<IViewManager>();

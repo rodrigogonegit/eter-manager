@@ -1,4 +1,5 @@
-﻿using EterManager.UserInterface.ViewModels;
+﻿using System.ComponentModel;
+using EterManager.UserInterface.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +26,17 @@ namespace EterManager.UserInterface.Views
             InitializeComponent();
 
             // To avoid design-time issues
-            if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                DataContext = ((App)Application.Current).GetInstance<MainViewModel>();
+                DataContext = ((App)Application.Current).GetInstance<MainWindowVm>();
             }
+
+            Closing += OnClosing;
+        }
+
+        private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
+        {
+            (DataContext as MainWindowVm).OnWindowClose(sender, cancelEventArgs);
         }
     }
 }

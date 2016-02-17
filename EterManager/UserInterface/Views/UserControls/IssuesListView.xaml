@@ -6,7 +6,7 @@
             <RowDefinition Height="36"/>
             <RowDefinition Height="37*"/>
         </Grid.RowDefinitions>
-        <!-- Show errors -->
+         <!--Show errors--> 
         <ToggleButton HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="82" IsChecked="{Binding IsShowErrors}">
             <ToggleButton.Content>
                 <Grid>
@@ -21,7 +21,7 @@
                 </Grid>
             </ToggleButton.Content>
         </ToggleButton>
-        <!-- Show warnings -->
+         <!--Show warnings--> 
         <ToggleButton HorizontalAlignment="Left" Margin="97,10,0,0" VerticalAlignment="Top" Width="105" IsChecked="{Binding IsShowWarnings}">
             <ToggleButton.Content>
                 <Grid>
@@ -36,8 +36,8 @@
                 </Grid>
             </ToggleButton.Content>
         </ToggleButton>
-        <!-- Show messages -->
-        <ToggleButton HorizontalAlignment="Left" Margin="202,10,0,0" VerticalAlignment="Top" Width="106" IsChecked="{Binding IsShowMessages}">
+         <!--Show messages--> 
+        <ToggleButton HorizontalAlignment="Left" Margin="207,10,0,0" VerticalAlignment="Top" Width="106" IsChecked="{Binding IsShowMessages}">
             <ToggleButton.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -51,7 +51,7 @@
                 </Grid>
             </ToggleButton.Content>
         </ToggleButton>
-        <ListView SelectedItem="{Binding SelectedIssue}" ItemsSource="{Binding IssuesList}" Margin="10,0,0.2,0" Grid.Row="1">
+        <ListView x:Name="MainLv" SelectedItem="{Binding SelectedIssue}" ItemsSource="{Binding IssuesList}" Margin="10,0,0.2,0" Grid.Row="1">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy">
@@ -78,10 +78,10 @@
                                     <Image x:Name="image" Source="/UserInterface\VisualResources\Images/information.png" Height="14" Width="14" />
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Severity}" Value="Error" >
-                                            <!--<Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images/error.png" />-->
+                                            <Setter TargetName="image" Property="Source" Value="/UserInterface/VisualResources/Images/error.png" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Severity}" Value="Warning" >
-                                            <!--<Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images\warning.png" />-->
+                                            <Setter TargetName="image" Property="Source" Value="/UserInterface\VisualResources\Images\warning.png" />
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>

@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="EterManager.UserInterface.Views.UserControls.FilesActionListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:EterManager.UserInterface.Converters"
+        xmlns:utilities="clr-namespace:EterManager.Utilities">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        
+        <Style x:Key="CustomButton" TargetType="{x:Type Button}" BasedOn="{x:Null}">
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource SimpleButtonFocusVisual}"/>
+            <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+
+                        <!-- We use Grid as a root because it is easy to add more elements to customize the button -->
+                        <Grid x:Name="Grid">
+                            <Border x:Name="Border" Background="{TemplateBinding Background}"
+                           BorderBrush="{TemplateBinding BorderBrush}"
+                           BorderThickness="{TemplateBinding BorderThickness}"
+                           Padding="{TemplateBinding Padding}"/>
+
+                            <!-- Content Presenter is where the text content etc is placed by the control -->
+                            <!-- The bindings are useful so that the control can be parameterized without editing the template -->
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    Margin="{TemplateBinding Padding}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    RecognizesAccessKey="True"/>
+                        </Grid>
+
+                        <!--Each state sets a brush on the Border in the template -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" Value="{DynamicResource DefaultedBorderBrush}" TargetName="Border"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource MouseOverBrush}" TargetName="Border"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource PressedBrush}" TargetName="Border"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource PressedBorderBrush}" TargetName="Border"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="true">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <TextBlock Text="Search bar:" HorizontalAlignment="Left" Width="61" Height="16" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="66,0,0,0" Height="18" VerticalAlignment="Top"/>
+        <ListView Drop="MainLv_OnDrop" AllowDrop="True" x:Name="mainLv" ItemsSource="{Binding WorkingItemsList}" SizeChanged="ListView_SizeChanged" Loaded="ListView_Loaded" MouseDoubleClick="mainLv_MouseDoubleClick" Margin="0,26,0,0">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Height" Value="25"/>
+                    <Setter Property="IsSelected" Value="{Binding Mode=TwoWay, Path=IsSelected}"/>
+                    <Setter Property="Visibility" Value="{Binding Mode=TwoWay, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"></Setter>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <!-- State -->
+                    <GridViewColumn Header="State" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image ToolTip="{Binding StateTooltip}" gif:ImageBehavior.AutoStart="True" gif:ImageBehavior.AnimatedSource="{Binding Icon}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!-- Filename -->
+                    <GridViewColumn Header="Filename" Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,2,0,0" Text="{Binding DisplayName}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!-- Progress -->
+                    <GridViewColumn Header="Progress" Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="90*"/>
+                                        <ColumnDefinition Width="80*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Width="Auto"  ToolTip="{Binding ActionLabel}" Grid.Column="0" Text="{Binding ActionLabel}"/>
+                                    <ProgressBar  HorizontalContentAlignment="Stretch" Grid.Column="1" Margin="20,0,0,0"  Height="15" Value="{Binding ActionProgress}"/>
+                                </Grid>
+
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!-- Actions -->
+                    <GridViewColumn Header="Actions" Width="130">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button ToolTip="Unpack file" Command="{Binding UnpackFileCommand}" Style="{StaticResource CustomButton}">
+                                        <Button.Content>
+                                            <StackPanel Height="20" Width="20" Orientation="Horizontal">
+                                                <Image Source="/UserInterface\VisualResources\Images/unpack.png"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button Margin="3,0,0,0" ToolTip="Pack file" Command="{Binding PackFileCommand}" Style="{StaticResource CustomButton}">
+                                        <Button.Content>
+                                            <StackPanel Height="20" Width="20" Orientation="Horizontal">
+                                                <Image Source="/UserInterface\VisualResources\Images/pack.png"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button Margin="3,0,0,0" ToolTip="Browse file index"  Command="{Binding ShowIndexDetailsCommand}" Style="{StaticResource CustomButton}">
+                                        <Button.Content>
+                                            <StackPanel Height="20" Width="20" Orientation="Horizontal">
+                                                <Image Source="/UserInterface\VisualResources\Images\viewDetails.png"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                    <!--<Button Margin="3,0,0,0" ToolTip="Move to client directory"  Command="{Binding MoveToMainDirCommand}">
+                                        <Button.Content>
+                                            <StackPanel Height="20" Width="20" Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Images/commit.png"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>-->
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!--Pack Filter-->
+                    <GridViewColumn Header="Pack filter" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox Width="Auto" HorizontalContentAlignment="Stretch" SelectedIndex="{Binding SelectedFilter}" VerticalAlignment="Top">
+                                    <ComboBoxItem Content="Raw" ToolTip="Just raw, no compression or encryption."/>
+                                    <ComboBoxItem Content="Lzo" ToolTip="Compression but not encryption"/>
+                                    <ComboBoxItem Content="Xtea" ToolTip="Compression and encryption"/>
+
+                                </ComboBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Set pack filter of selected items">
+                        <MenuItem.Icon>
+                            <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\filter.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Raw" Command="{Binding SetAllItemsFilterCommand}" CommandParameter="0"/>
+                        <MenuItem Header="Lzo" Command="{Binding SetAllItemsFilterCommand}" CommandParameter="1"/>
+                        <MenuItem Header="Xtea" Command="{Binding SetAllItemsFilterCommand}" CommandParameter="2"/>
+                    </MenuItem>
+                    <MenuItem Header="Unpack Selected" Command="{Binding UnpackSelectedItemsCommand}">
+                        <MenuItem.Icon>
+                            <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\unpack.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Pack Selected" Command="{Binding PackSelectedItemsCommand}">
+                        <MenuItem.Icon>
+                            <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images/pack.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Remove Selected Items" Command="{Binding RemoveItemsCommand}">
+                        <MenuItem.Icon>
+                            <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images/remove.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Simultaneously task limit">
+                        <xctk:IntegerUpDown Value="{Binding MaxSimFiles}" Minimum="1" Maximum="30" Watermark="Set task limit"/>
+                    </MenuItem>
+                    <MenuItem Header="Select/deselect all" Command="{Binding SelectOrDeselectAllCommand}">
+                    </MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+
+    </Grid>
+</UserControl>

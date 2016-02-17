@@ -1,21 +1,27 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Input;
 using Caliburn.Micro;
 using EterManager.Base;
+using EterManager.Models;
 using EterManager.UserInterface.Views;
 using EterManager.Utilities;
+using ObservableImmutable;
 
 namespace EterManager.UserInterface.ViewModels
 {
-    public class MainViewModel : ViewModelBase, IHandle<ClientProfileVM>
+    public class MainWindowVm : ViewModelBase, IHandle<ClientProfileVm>
     {
         #region Fields
 
-        // Commands
-        private readonly RelayCommand _openWindow;
-
-        // Fields
-        private ClientProfileVM _selectedProfile;
-
+        /// <summary>
+        /// OpenWindowCommand RelayCommand obj
+        /// </summary>
+        private RelayCommand _openWindow;
+        
         #endregion
 
         #region Constructors
@@ -23,10 +29,80 @@ namespace EterManager.UserInterface.ViewModels
         /// <summary>
         /// Creates new instance of MainVM
         /// </summary>
-        public MainViewModel()
+        public MainWindowVm()
+        {
+            EventAggregator.Subscribe(this);
+
+            // Internal initializer
+            Initialize();
+
+            // Command initializer
+            InitializeCommands();
+        }
+
+        /// <summary>
+        /// Internal initializer
+        /// </summary>
+        private void Initialize()
+        {
+            Properties.Settings.Default.Upgrade();
+            Instance = this;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            CurrentAppVersion = String.Format("Version: {0} GunnerMBT ©", fvi.FileVersion);
+
+            CanChangeProfile = true;
+
+            // Default settings
+            var value = Properties.Settings.Default.MaxSimFiles;
+            ConstantsBase.MaxSimFiles = (value <= 0) ? 3 : value;
+
+            // Get profile list
+            var profileModelList = ClientProfile.GetAllProfiles();
+
+            // Update view
+            ProfileList =
+                    new ObservableImmutableList<ClientProfileVm>(
+                        profileModelList.Select(x => new ClientProfileVm(x)));
+
+            // Load default profile
+            var profileName = Properties.Settings.Default.DefaultProfile;
+
+            if (!String.IsNullOrWhiteSpace(profileName))
+            {
+                //SelectedWorkingProfile = new ClientProfileVm(ClientProfile.GetProfileByPredicate(p => String.Equals(p.Name, profileName, StringComparison.CurrentCultureIgnoreCase)));
+                SelectedWorkingProfile = ProfileList.First(x => x.Name == profileName);
+
+                // To make sure every other class is udpated
+                Handle(SelectedWorkingProfile);
+            }
+        }
+
+        /// <summary>
+        /// Initializes all commands
+        /// </summary>
+        private void InitializeCommands()
         {
             _openWindow = new RelayCommand(OpenWindowAction, param => true);
-            EventAggregator.Subscribe(this);
+        }
+
+        #endregion
+
+        #region Methdos
+
+        /// <summary>
+        /// Called when the profile list is updated from the profile list
+        /// </summary>
+        public void UpdateProfileListFromProfilesWindow(ObservableImmutableList<ClientProfileVm> list)
+        {
+            string oldProfileName = "";
+
+            if (SelectedWorkingProfile != null)
+                oldProfileName = SelectedWorkingProfile.Name;
+            ProfileList = list;
+            
+            if (!String.IsNullOrWhiteSpace(oldProfileName))
+                SelectedWorkingProfile = ProfileList.First(x => x.Name == oldProfileName);
         }
 
         #endregion
@@ -52,6 +128,15 @@ namespace EterManager.UserInterface.ViewModels
                 case "PACKING_FILTERS":
                     ViewManager.ShowWindow<PackingFiltersView>();
                     break;
+                case "VIRTUAL_TREE_VIEW":
+                    // If no selected profile, return
+                    if (SelectedWorkingProfile == null)
+                    {
+                        UserInput.ShowMessage("SELECT_PROFILE_FIRST");
+                        break;
+                    }
+                    ViewManager.ShowWindow<VirtualTreeViewWindow>(false, String.Format("Virtual Tree View - {0}", SelectedWorkingProfile.Name));
+                    break;
                 default:
                     Logger.Critical(new[] { "INTERNAL_ERROR", "Error at OpenWindowAction with argument:", param });
                     break;
@@ -66,6 +151,9 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Command Interfaces
 
+        /// <summary>
+        /// OpenWindowCommand interface
+        /// </summary>
         public ICommand OpenWindowCommand
         {
             get { return _openWindow; }
@@ -83,18 +171,70 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Presentation Members
 
+        private bool _canChangeProfile;
+
+        /// <summary>
+        /// Defines wether the combobox is enabled
+        /// </summary>
+        public bool CanChangeProfile
+        {
+            get { return _canChangeProfile; }
+            set
+            {
+                SetProperty(ref _canChangeProfile, value, "CanChangeProfile");
+            }
+        }
+
+        private ObservableImmutableList<ClientProfileVm> _profileList;
+
+        /// <summary>
+        /// List of all profiles
+        /// </summary>
+        public ObservableImmutableList<ClientProfileVm> ProfileList
+        {
+            get { return _profileList; }
+            set { SetProperty(ref _profileList, value, "ProfileList"); }
+        }
+
+        private ClientProfileVm _selectedWorkingProfile;
+
         /// <summary>
         /// Holds reference to the selected profile, assigned when ProfilesVM fires up the event
         /// </summary>
-        public ClientProfileVM SelectedProfile
+        public ClientProfileVm SelectedWorkingProfile
         {
-            get { return _selectedProfile; }
-            set { SetProperty(ref _selectedProfile, value, "SelectedProfile"); }
+            get { return _selectedWorkingProfile; }
+            set
+            {
+                SetProperty(ref _selectedWorkingProfile, value, "SelectedWorkingProfile");
+
+                // Update all profile references
+                EterHelper.SelectedProfile = value;
+
+                if (ProfilesVm.Instance != null)
+                    ProfilesVm.Instance.SelectedProfile = value;
+
+                if (FilesActionVm.Instance != null)
+                    FilesActionVm.Instance.ProcessWorkingDirectory();
+            }
         }
 
+        private string _currentAppVersion;
+
+        /// <summary>
+        /// Current app version
+        /// </summary>
+        public string CurrentAppVersion
+        {
+            get { return _currentAppVersion; }
+            set { SetProperty(ref _currentAppVersion, value, "CurrentAppVersion"); }
+        }
+        
         #endregion
 
         #region Others
+
+        public static MainWindowVm Instance { get; set; }
 
         #endregion
 
@@ -106,10 +246,23 @@ namespace EterManager.UserInterface.ViewModels
         /// Updates selected profile
         /// </summary>
         /// <param name="message"></param>
-        public void Handle(ClientProfileVM message)
+        public void Handle(ClientProfileVm message)
         {
-            SelectedProfile = message;
+            SelectedWorkingProfile = message;
             EterHelper.SelectedProfile = message;
+            FilesActionVm.Instance.StartMonitoringDirectory();
+        }
+
+        #endregion
+
+        #region View Events
+
+        /// <summary>
+        /// Called from view when it is closing
+        /// </summary>
+        public void OnWindowClose(object sender, CancelEventArgs cancelEventArgs)
+        {
+            Properties.Settings.Default.Save();
         }
 
         #endregion

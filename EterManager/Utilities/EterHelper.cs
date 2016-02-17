@@ -10,7 +10,7 @@ namespace EterManager.Utilities
 {
     public static class EterHelper
     {
-        public static ClientProfileVM SelectedProfile { get; set; }
+        public static ClientProfileVm SelectedProfile { get; set; }
 
         /// <summary>
         /// Replaces .IndexFileExtension from string with .PackFileExtension

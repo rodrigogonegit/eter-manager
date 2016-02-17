@@ -30,7 +30,7 @@ namespace EterManager.UserInterface.Views
             // To avoid design-time issues
             if (!System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
             {
-                DataContext = ((App)Application.Current).GetInstance<ProfilesVM>();
+                DataContext = ((App)Application.Current).GetInstance<ProfilesVm>();
             }
         }
     }

@@ -14,5 +14,8 @@ namespace EterManager.Base
         internal static readonly byte[] LzoFourCc = { 77, 67, 79, 90 }; //MCOZ
         internal static readonly byte[] EterFourCc = { 69, 80, 75, 68 }; //EPKD
 
+        // App-wide settings
+        internal static int MaxSimFiles = 0;
+
     }
 }

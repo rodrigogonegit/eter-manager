@@ -14,7 +14,6 @@ namespace EterManager.Services
     /// </summary>
     interface ILogger
     {
-
         List<Issue> Issues { get; set; }
 
         event Logger.IssuesChangedEventHandler IssuesChanged;

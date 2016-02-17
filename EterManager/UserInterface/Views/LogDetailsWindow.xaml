@@ -1,0 +1,24 @@
+﻿<Window x:Class="EterManager.UserInterface.Views.LogDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:EterManager.UserInterface.Converters"
+        Title="LogDetailsWindow" Height="359" Width="823">
+    <Window.Resources>
+        <converters:StringListToStringConverter x:Key="StringListToStringConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="289*"/>
+            <ColumnDefinition Width="526*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Files with different hash than expected:" VerticalAlignment="Top"/>
+        <TextBox  Text="{Binding HashMismatchFiles, Converter={StaticResource StringListToStringConverter}, ConverterParameter=NEW_LINE}" IsReadOnly="True" Margin="10,31,8,10" TextWrapping="Wrap"/>
+        <TextBlock HorizontalAlignment="Left" Margin="8,10,0,0" TextWrapping="Wrap" Text="Files in which an error occured:" VerticalAlignment="Top" Grid.Column="1"/>
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ErrorList}" Margin="8,31,9,10" Grid.Column="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Width="150" Binding="{Binding Filename}" ClipboardContentBinding="{x:Null}" Header="Filename"/>
+                <DataGridTextColumn IsReadOnly="True" Width="400" Binding="{Binding ErrorMotive}" ClipboardContentBinding="{x:Null}" Header="Error description"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

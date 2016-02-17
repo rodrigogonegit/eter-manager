@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using EterManager.Services;
 
 namespace EterManager.Utilities
 {
-// ReSharper disable once InconsistentNaming
-    class IOHelper
+    public static class IOHelper
     {
+        /// <summary>
+        /// Reference to the logger
+        /// </summary>
+        private static ILogger _logger = ((App)Application.Current).GetInstance<ILogger>();
+
         /// <summary>
         /// Read input file to byte array using a Filestream
         /// </summary>
@@ -129,6 +138,11 @@ namespace EterManager.Utilities
             return false;
         }
 
+        /// <summary>
+        /// Checks if directory if accessisable
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
         public static bool CanAccessFolder(string folderPath)
         {
             try
@@ -156,6 +170,84 @@ namespace EterManager.Utilities
             var temp = new byte[length];
             Array.Copy(array, offset, temp, 0, length);
             return BitConverter.ToInt32(temp, 0);
+        }
+
+        /// <summary>
+        /// Gets total size in bytes of a directory's files
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static long GetTotalFileSizeOfDirectory(string dir)
+        {
+            return GetAllFilesFromDir(dir).Sum(x => x.Length);
+        }
+
+        /// <summary>
+        /// Deletes everything from directory
+        /// </summary>
+        /// <param name="dirPath"></param>
+        public static void CleanDirectory(string dirPath)
+        {
+            foreach (var file in GetAllFilesFromDir(dirPath))
+                File.Delete(file.FullName);
+        }
+
+        /// <summary>
+        /// Gets all files from directory (recursive)
+        /// </summary>
+        /// <param name="dirPath"></param>
+        /// <returns></returns>
+        public static List<FileInfo> GetAllFilesFromDir(string dirPath)
+        {
+            try
+            {
+                var dirInfo = new DirectoryInfo(dirPath);
+
+                List<FileInfo> returnList = dirInfo.GetFiles().ToList();
+
+                foreach (var dir in dirInfo.GetDirectories())
+                {
+                    ProcessDir(dir, ref returnList);
+                }
+
+                return returnList;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.Error("ERROR_READING_PATH", null, dirPath);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                _logger.Error("DIR_NOT_FOUND", null, dirPath);
+            }
+
+            return new List<FileInfo>();
+        }
+
+        /// <summary>
+        /// Processes directory
+        /// </summary>
+        /// <param name="dirInfo"></param>
+        /// <param name="returnList"></param>
+        private static void ProcessDir(DirectoryInfo dirInfo, ref List<FileInfo> returnList)
+        {
+            returnList.AddRange(dirInfo.GetFiles());
+
+            foreach (var dir in dirInfo.GetDirectories())
+            {
+                ProcessDir(dir, ref returnList);
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of all the first layer directories
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static List<DirectoryInfo> GetAllFirstDirectories(string path)
+        {
+            // Return list
+            return new DirectoryInfo(path).GetDirectories().ToList();
         }
     }
 }

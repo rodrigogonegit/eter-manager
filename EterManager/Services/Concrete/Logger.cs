@@ -9,6 +9,7 @@ using System.Windows;
 
 namespace EterManager.Services.Concrete
 {
+
     class Logger : ILogger
     {
         #region ILocale Members

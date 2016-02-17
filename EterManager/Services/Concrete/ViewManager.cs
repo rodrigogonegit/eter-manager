@@ -12,12 +12,28 @@ namespace EterManager.Services.Concrete
         /// </summary>
         /// <typeparam name="T">Type of window to show</typeparam>
         /// <param name="forceNewInstance">Force new instance of window</param>
-        public void ShowWindow<T>(bool forceNewInstance = false, string newTitle = null)
+        /// <param name="newTitle"></param>
+        /// <param name="titleMustMatch"></param>
+        public Window ShowWindow<T>(bool forceNewInstance = false, string newTitle = null, bool titleMustMatch = false)
         {
-            var window = Application.Current.Windows.OfType<T>().FirstOrDefault();
+            Window window = null;
+
+            if (titleMustMatch)
+            {
+                foreach (var w in Application.Current.Windows.OfType<T>())
+                {
+                    if ((w as Window).Title == newTitle)
+                        window = w as Window;
+                }
+            }
+            else
+            {
+                window = Application.Current.Windows.OfType<T>().FirstOrDefault() as Window;
+            }
+
             if (window != null && forceNewInstance == false)
             {
-                var wnd = (window as Window);
+                var wnd = window;
                 wnd.Visibility = Visibility.Visible;
                 wnd.WindowState = WindowState.Normal;
                 wnd.Focus();
@@ -28,23 +44,29 @@ namespace EterManager.Services.Concrete
             else
             {
                 var wnd = Activator.CreateInstance<T>() as Window;
-                if (wnd == null) return;
+                if (wnd == null) return null;
                 wnd.Show();
                 if (newTitle != null)
                     wnd.Title = newTitle;
+
+                return wnd;
             }
+
+            return window;
         }
 
         /// <summary>
         /// Closes Window
         /// </summary>
         /// <typeparam name="T">Type of window to close</typeparam>
-        public void CloseWindow<T>()
+        public void CloseWindow<T>(string matchingTitle = "")
         {
-            var window = Application.Current.Windows.OfType<T>().FirstOrDefault();
+            var window = (matchingTitle == "")
+                ? Application.Current.Windows.OfType<T>().FirstOrDefault() as Window
+                : Application.Current.Windows.OfType<T>().Cast<Window>().FirstOrDefault(x => x.Title == matchingTitle);
 
             if (window != null)
-                (window as Window).Close();
+                window.Close();
         }
 
         /// <summary>

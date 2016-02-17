@@ -19,6 +19,9 @@ namespace EterManager.Services.Concrete
 
         public void InsertDrivePoints(ref string toCheck)
         {
+            if (DrivePoints == null)
+                DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
+
             foreach (var dictItem in DrivePoints)
             {
                 if (toCheck.Contains(dictItem.Key) && !toCheck.Contains(dictItem.Value))
@@ -30,6 +33,9 @@ namespace EterManager.Services.Concrete
 
         public string InsertDrivePoints(string toCheck)
         {
+            if (DrivePoints == null)
+                DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
+
             foreach (var dictItem in DrivePoints)
             {
                 if (toCheck.Contains(dictItem.Key) && !toCheck.Contains(dictItem.Value))
@@ -42,6 +48,9 @@ namespace EterManager.Services.Concrete
 
         public void RemoveDrivePoints(ref string toCheck)
         {
+            if (DrivePoints == null)
+                DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
+
             foreach (var dictItem in DrivePoints)
             {
                 if (toCheck.Contains(dictItem.Value))
@@ -53,6 +62,9 @@ namespace EterManager.Services.Concrete
 
         public string RemoveDrivePoints(string toCheck)
         {
+            if (DrivePoints == null)
+                DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
+
             foreach (var dictItem in DrivePoints)
             {
                 if (toCheck.Contains(dictItem.Value))
@@ -65,6 +77,9 @@ namespace EterManager.Services.Concrete
 
         public void CheckIfContainsDrivePoint(string path)
         {
+            if (DrivePoints == null)
+                DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
+
             path = path.Replace("\\", "/");
 
             if (path.Contains(":"))

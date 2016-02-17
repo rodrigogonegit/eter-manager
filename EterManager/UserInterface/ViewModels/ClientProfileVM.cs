@@ -12,11 +12,18 @@ using EterManager.Utilities;
 
 namespace EterManager.UserInterface.ViewModels
 {
-    public class ClientProfileVM : ViewModelBase, INotifyDataErrorInfo
+    public class ClientProfileVm : ViewModelBase, INotifyDataErrorInfo
     {
         #region Fields
 
+        /// <summary>
+        /// Client profile model obj
+        /// </summary>
         private readonly ClientProfile _profile;
+
+        /// <summary>
+        /// List of validation errors
+        /// </summary>
         private readonly Dictionary<String, List<String>> _errors = new Dictionary<string, List<string>>();
 
         // Commands
@@ -28,13 +35,13 @@ namespace EterManager.UserInterface.ViewModels
         /// <summary>
         /// Null argument overload
         /// </summary>
-        public ClientProfileVM() : this(new ClientProfile()) { }
+        public ClientProfileVm() : this(new ClientProfile()) { }
 
         /// <summary>
         /// Creates new profile instance
         /// </summary>
         /// <param name="profile"></param>
-        public ClientProfileVM(ClientProfile profile)
+        public ClientProfileVm(ClientProfile profile)
         {
             _profile = profile;
 
@@ -50,12 +57,25 @@ namespace EterManager.UserInterface.ViewModels
         /// <summary>
         /// Saves current profile to file
         /// </summary>
-        public void SaveProfile()
+        public void SaveProfile(bool log = true)
         {
             try
             {
+                IsNameValid(Name);
+                IsUnpackDirectoryValid(UnpackDirectory);
+                IsWorkingDirectoryValid(WorkingDirectory);
+                IsKeyValid(BitConverter.ToString(IndexKey), "IndexKey");
+                IsKeyValid(BitConverter.ToString(PackKey), "PackKey");
+
+                if (HasErrors)
+                {
+                    UserInput.ShowMessage("INVALID_PROFILE_SETTINGS");
+                    return;
+                }
                 _profile.Save();
-                Logger.Information("PROFILE_SAVED", null, Name);
+
+                if (log)
+                    Logger.Information("PROFILE_SAVED", null, Name);
             }
             catch (ProfileNameAlreadyExistsException e)
             {
@@ -66,6 +86,14 @@ namespace EterManager.UserInterface.ViewModels
             {
                 Logger.Error("COULD_NOT_ACCESS_FILE", String.Format("{0}{1}.xml", ConstantsBase.ProfilesPath, Name), e.Message);
             }
+        }
+
+        /// <summary>
+        /// Remove profile
+        /// </summary>
+        public void RemoveProfile()
+        {
+            _profile.Remove();
         }
 
         #endregion
@@ -95,8 +123,9 @@ namespace EterManager.UserInterface.ViewModels
             get { return _profile.Name; }
             set
             {
-                if (_profile.Name != value && IsNameValid(value))
+                if (_profile.Name != value)
                 {
+                    IsNameValid(value);
                     _profile.Name = value;
                     OnPropertyChanged("Name");
                 }
@@ -108,8 +137,9 @@ namespace EterManager.UserInterface.ViewModels
             get { return _profile.WorkingDirectory; }
             set
             {
-                if (_profile.WorkingDirectory != value && IsWorkingDirectoryValid(value))
+                if (_profile.WorkingDirectory != value)
                 {
+                    IsWorkingDirectoryValid(value);
                     _profile.WorkingDirectory = StringHelpers.AddSlashToEnd(value);
                     OnPropertyChanged("WorkingDirectory");
                 }
@@ -121,8 +151,9 @@ namespace EterManager.UserInterface.ViewModels
             get { return _profile.UnpackDirectory; }
             set
             {
-                if (_profile.UnpackDirectory != value && IsUnpackDirectoryValid(value))
+                if (_profile.UnpackDirectory != value)
                 {
+                    IsUnpackDirectoryValid(value);
                     _profile.UnpackDirectory = StringHelpers.AddSlashToEnd(value);
                     OnPropertyChanged("UnpackDirectory");
                 }
@@ -177,6 +208,19 @@ namespace EterManager.UserInterface.ViewModels
                 {
                     _profile.PackExtension = value;
                     OnPropertyChanged("PackExtension");
+                }
+            }
+        }
+
+        public bool IsDefault
+        {
+            get { return _profile.IsDefault; }
+            set
+            {
+                if (_profile.IsDefault != value)
+                {
+                    _profile.IsDefault = value;
+                    OnPropertyChanged("IsDefault");
                 }
             }
         }
@@ -338,7 +382,7 @@ namespace EterManager.UserInterface.ViewModels
 
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
-        public System.Collections.IEnumerable GetErrors(string propertyName)
+        public IEnumerable GetErrors(string propertyName)
         {
             if (String.IsNullOrEmpty(propertyName) ||
                 !_errors.ContainsKey(propertyName)) return null;
@@ -351,5 +395,13 @@ namespace EterManager.UserInterface.ViewModels
         }
 
         #endregion
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || !(obj is ClientProfileVm))
+                return false;
+
+            return ((ClientProfileVm)obj).Name == this.Name;
+        }
     }
 }

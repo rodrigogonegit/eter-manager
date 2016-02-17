@@ -63,6 +63,12 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\Libs\WpfAnimatedGif.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.2.4.14475.10340\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -73,13 +79,15 @@
     <Compile Include="Base\ViewModelBase.cs" />
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
-    <Compile Include="Converters\ByteArrayToHexStringConverter.cs" />
+    <Compile Include="UserInterface\Converters\ByteArrayToHexStringConverter.cs" />
     <Compile Include="DataAccessLayer\DrivePointsDal.cs" />
     <Compile Include="DataAccessLayer\EterFilesDal.cs" />
+    <Compile Include="Exceptions\EterFiles\ErrorReadingIndexException.cs" />
+    <Compile Include="Exceptions\EterFiles\EterPackFileNotFoundException.cs" />
+    <Compile Include="Exceptions\EterFiles\InvalidEterOperationException.cs" />
     <Compile Include="Exceptions\Profile\ProfileNameAlreadyExistsException.cs" />
     <Compile Include="Models\ClientProfile.cs" />
-    <Compile Include="Models\Abstract\ITreeItem.cs" />
-    <Compile Include="Models\ErrorFile.cs" />
+    <Compile Include="Models\ErrorItem.cs" />
     <Compile Include="Models\IndexItem.cs" />
     <Compile Include="Models\Issue.cs" />
     <Compile Include="Models\TreeItem.cs" />
@@ -104,12 +112,26 @@
     <Compile Include="UserInterface\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="UserInterface\Converters\EnumValuesConverter.cs" />
     <Compile Include="UserInterface\Converters\LevelToIndentConverter.cs" />
+    <Compile Include="UserInterface\Converters\LongToSizeStringConverter.cs" />
+    <Compile Include="UserInterface\Converters\StringListToStringConverter.cs" />
     <Compile Include="UserInterface\Converters\ValueConverterBase.cs" />
     <Compile Include="UserInterface\Helpers\ListBoxItemHelper.cs" />
-    <Compile Include="UserInterface\ViewModels\ClientProfileVM.cs" />
-    <Compile Include="UserInterface\ViewModels\IssuesListViewModel.cs" />
-    <Compile Include="UserInterface\ViewModels\MainWindowVM.cs" />
-    <Compile Include="UserInterface\ViewModels\ProfilesVM.cs" />
+    <Compile Include="UserInterface\ViewModels\ClientProfileVm.cs" />
+    <Compile Include="UserInterface\ViewModels\FilesActionVm.cs" />
+    <Compile Include="UserInterface\ViewModels\IssuesListVm.cs" />
+    <Compile Include="UserInterface\ViewModels\MainWindowVm.cs" />
+    <Compile Include="UserInterface\ViewModels\ProfilesVm.cs" />
+    <Compile Include="UserInterface\ViewModels\TreeItem\ITreeViewItem.cs" />
+    <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFileVm.cs" />
+    <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFolderVm.cs" />
+    <Compile Include="UserInterface\ViewModels\VirtualTreeViewWindowVm.cs" />
+    <Compile Include="UserInterface\ViewModels\WorkingItemVm.cs" />
+    <Compile Include="UserInterface\Views\IndexDetailsWindow.xaml.cs">
+      <DependentUpon>IndexDetailsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Views\LogDetailsWindow.xaml.cs">
+      <DependentUpon>LogDetailsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -118,6 +140,9 @@
     </Compile>
     <Compile Include="UserInterface\Views\ProfileManagerWindow.xaml.cs">
       <DependentUpon>ProfileManagerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Views\UserControls\FilesActionListView.xaml.cs">
+      <DependentUpon>FilesActionListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\Views\UserControls\IssuesListView.xaml.cs">
       <DependentUpon>IssuesListView.xaml</DependentUpon>
@@ -128,19 +153,32 @@
     <Compile Include="UserInterface\Views\UserControls\SearchableTreeView.xaml.cs">
       <DependentUpon>SearchableTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\Views\VirtualTreeViewWindow.xaml.cs">
+      <DependentUpon>VirtualTreeViewWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\CrcHelper.cs" />
     <Compile Include="Utilities\EterHelper.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\IOHelper.cs" />
     <Compile Include="Utilities\LzoHelper.cs" />
+    <Compile Include="Utilities\DropCommand.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\StringHelpers.cs" />
+    <Compile Include="Utilities\TreeItemHelpers.cs" />
     <Compile Include="Utilities\UserInput.cs" />
     <Compile Include="Utilities\Xtea.cs" />
+    <Page Include="UserInterface\Views\IndexDetailsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Views\LogDetailsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserInterface\Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -153,6 +191,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserInterface\Views\UserControls\FilesActionListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserInterface\Views\UserControls\IssuesListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterface\Views\UserControls\SearchableTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Views\VirtualTreeViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -243,6 +289,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Models\Abstract\" />
     <Folder Include="UserInterface\VisualResources\Gfx\" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +316,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UserInterface\VisualResources\Images\copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\dir.png" />
+    <Resource Include="UserInterface\VisualResources\Images\errorReady.png" />
+    <Resource Include="UserInterface\VisualResources\Images\filter.png" />
+    <Resource Include="UserInterface\VisualResources\Images\item.png" />
+    <Resource Include="UserInterface\VisualResources\Images\mainIco.ico" />
+    <Resource Include="UserInterface\VisualResources\Images\pack.png" />
+    <Resource Include="UserInterface\VisualResources\Images\packOfFiles.png" />
+    <Resource Include="UserInterface\VisualResources\Images\processing.gif" />
+    <Resource Include="UserInterface\VisualResources\Images\queue.png" />
+    <Resource Include="UserInterface\VisualResources\Images\ready.png" />
+    <Resource Include="UserInterface\VisualResources\Images\search.png" />
+    <Resource Include="UserInterface\VisualResources\Images\settings.png" />
+    <Resource Include="UserInterface\VisualResources\Images\viewDetails.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\unpack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\remove.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

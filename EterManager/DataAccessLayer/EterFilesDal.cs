@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using EterManager.Base;
+using EterManager.Exceptions.EterFiles;
 using EterManager.Models;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
@@ -15,26 +15,33 @@ namespace EterManager.DataAccessLayer
 {
     class EterFilesDal
     {
-        private static IDrivePointManager _drivePointManager =
+        private static readonly IDrivePointManager DrivePointManager =
             ((App) Application.Current).GetInstance<IDrivePointManager>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packFile"></param>
+        /// <param name="saveFilesPath"></param>
+        /// <param name="indexKey"></param>
+        /// <param name="packKey"></param>
+        /// <param name="progressCallback"></param>
+        /// <param name="fileLoggingCallback"></param>
         public static void UnpackFile(
             FileInfo packFile,
             string saveFilesPath,
             byte[] indexKey,
             byte[] packKey,
             Action<int, int> progressCallback,
-            Action<ErrorFile, string> fileLoggingCallback,
-            Action fatalErrorCallback)
+            Action<ErrorItem, string> fileLoggingCallback)
         {
             if (!File.Exists(packFile.FullName))
             {
-                //Logger.LogEvent(Log.LogId.PACK_FILE_NOT_FOUND_LOG, Log.EventType.Error, Helper.TrimExtension(packFile.Name), null, packFile.Name); TODO
-                fatalErrorCallback();
-                return;
+                throw new EterPackFileNotFoundException();
             }
 
-            List<IndexItem> workingList = EterFilesDal.DerializeDataToModelList(EterHelper.ReplaceWithEixExt(packFile.FullName), indexKey, StringHelpers.TrimExtension(packFile.Name));
+            // Reads the index file
+            List<IndexItem> workingList = ReadIndexFile(EterHelper.ReplaceWithEixExt(packFile.FullName), indexKey, StringHelpers.TrimExtension(packFile.Name));
 
             if (workingList == null)
                 return;
@@ -44,8 +51,8 @@ namespace EterManager.DataAccessLayer
 
             // File result counters
             double totalFilesCounter = 0;
+            int unnamedFilesCounter = 0;
             int operationResult = 0;
-            double actionProgress = 0;
 
             foreach (IndexItem item in workingList)
             {
@@ -54,54 +61,65 @@ namespace EterManager.DataAccessLayer
                     //Logger.LogOutputMessage(Log.LogId.FILE_SIZE_TOO_SMALL, args: new object[] { item.Filename, item.Size }); TODO
                     continue;
                 }
-                //item.Filename = DPHelper.RemoveDrivePoints(item.Filename);
 
-                try
-                {
-                    switch (item.PackType)
-                    {
-                        case 0: // Raw format
-                            operationResult = ProcessFileType0(packFile.FullName,
-                                                                                String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
-                                                                                item,
-                                                                                fileLoggingCallback);
-                            break;
-                        case 1: // LZO compressed file
-                            operationResult = ProcessFileType1(packFile.FullName,
-                                                                                String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
-                                                                                item,
-                                                                                fileLoggingCallback);
-                            break;
-                        case 2: // XTEA encrypted and LZO compressed file
-                            operationResult = ProcessFileType2(packFile.FullName,
-                                                                                String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
-                                                                                item,
-                                                                                packKey,
-                                                                                fileLoggingCallback);
-                            break;
-                        default: // Type not supported msg
-                            //Logger.LogOutputMessage(Log.LogId.TYPE_NOT_YET_SUPPORTED_LOG, args: new object[] { item.Filename, item.ParentFile }); TODO
-                            break;
-                    }
+                DrivePointManager.CheckIfContainsDrivePoint(item.Filename);
 
-                }
-                catch (Exception ex)
+                if (String.IsNullOrWhiteSpace(item.Filename))
                 {
-                    // Unhandled exception raised
-                    //Logger.LogExceptioToFile(ex.ToString());
-                    fatalErrorCallback();
-                    //Logger.LogEvent(Log.LogID.FAILED_TO_PROCESS_FILE, Log.EventType.Error, null, null, Path.GetFileNameWithoutExtension(packFile.Name)); TODO
-                    return;
+                    unnamedFilesCounter++;
+                    continue;
                 }
+
+                switch (item.PackType)
+                {
+                    // Raw format
+                    case 0: 
+                        operationResult = ProcessFileType0(
+                            packFile.FullName,
+                            String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
+                            item,
+                            fileLoggingCallback);
+                        break;
+                    // LZO compressed file
+                    case 1:
+                        operationResult = ProcessFileType1(
+                            packFile.FullName,
+                            String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
+                            item,
+                            fileLoggingCallback);
+                        break;
+                    // XTEA encrypted and LZO compressed file
+                    case 2: 
+                        operationResult = ProcessFileType2(
+                            packFile.FullName,
+                            String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
+                            item,
+                            packKey,
+                            fileLoggingCallback);
+                        break;
+                    default:
+                        fileLoggingCallback(
+                            new ErrorItem(item.Filename, String.Format("Type {0} is not yet supported.", item.PackType)),
+                            null);
+                        break;
+                }
+
                 totalFilesCounter += 1.0;
 
                 // Update progress
-                actionProgress = (totalFilesCounter / (double)workingList.Count * 100.0);
+                double actionProgress = (totalFilesCounter / workingList.Count * 100.0);
                 progressCallback(operationResult, (int)actionProgress);
             }
+
+            // If unnamed files were found, log it
+            if (unnamedFilesCounter > 0)
+                fileLoggingCallback(
+                    new ErrorItem("UNDEFINED", unnamedFilesCounter + " files were ignored due to incomplete header info (no name)", unnamedFilesCounter),
+                    null);
         }
 
         #region File Processing Stuff (types supported: 0 to 2)
+
         /// <summary>
         /// Processes files packed as type 0 (packed)
         /// </summary>
@@ -111,15 +129,12 @@ namespace EterManager.DataAccessLayer
         /// <param name="hashMismatchFiles">Vector holding files with CRC mismatch</param>
         /// <param name="errorFiles">Vector holding files ignored</param>
         /// <returns></returns>
-        public static int ProcessFileType0(string packFilePath, string saveFilesPath, IndexItem item, Action<ErrorFile, string> fileLoggingCallback)
+        public static int ProcessFileType0(string packFilePath, string saveFilesPath, IndexItem item, Action<ErrorItem, string> fileLoggingCallback)
         {
             int valueToReturn = 0;
             byte[] rawFileBuffer = IOHelper.ReadFileOffsetToLength(packFilePath, item.Offset, item.Size);
 
-            //Take care of relative path and folders
-            item.Filename = (item.Filename.Trim() == "") ? "unnamed" + item.Index : item.Filename;
-
-            string path = (saveFilesPath + item.Filename).Replace("\\", "/");
+            string path = DrivePointManager.RemoveDrivePoints((saveFilesPath + item.Filename).Replace("\\", "/"));
 
             string foldersPath = path.Substring(0, path.LastIndexOf("/", StringComparison.Ordinal));
 
@@ -160,7 +175,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="hashMismatchFiles">Vector holding files with CRC mismatch</param>
         /// <param name="errorFiles">Vector holding files ignored</param>
         /// <returns></returns>
-        public static int ProcessFileType1(string packFilePath, string saveFilesPath, IndexItem item, Action<ErrorFile, string> fileLoggingCallback)
+        public static int ProcessFileType1(string packFilePath, string saveFilesPath, IndexItem item, Action<ErrorItem, string> fileLoggingCallback)
         {
             int valueToReturn = 0;
             byte[] fileHeaderBuffer = IOHelper.ReadFileOffsetToLength(packFilePath, item.Offset, 16);
@@ -177,13 +192,17 @@ namespace EterManager.DataAccessLayer
             // Compare FourCC header
             if (!fourCC.SequenceEqual(ConstantsBase.LzoFourCc))
             {
-                fileLoggingCallback(new ErrorFile(item.Filename, String.Format("Invalid FourCC: {0}.", BitConverter.ToString(fourCC))), "");
+                fileLoggingCallback(new ErrorItem(item.Filename, String.Format("Invalid FourCC: {0}. Expected: {1} ({2})", 
+                        BitConverter.ToString(fourCC),
+                        BitConverter.ToString(ConstantsBase.LzoFourCc),
+                        Encoding.ASCII.GetString(ConstantsBase.LzoFourCc))),
+                    "");
                 return 2;
             }
 
             if (encryptedSize != 0 || compressedSize <= 0 || decompressedSize <= 0)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename, String.Format("Invalid header sizes (enc: {0} / cmpr: {1} / decompr: {2}", encryptedSize, compressedSize, decompressedSize)), "");
+                fileLoggingCallback(new ErrorItem(item.Filename, String.Format("Invalid header sizes (enc: {0} / cmpr: {1} / decompr: {2}", encryptedSize, compressedSize, decompressedSize)), "");
                 return 2;
             }
 
@@ -191,34 +210,31 @@ namespace EterManager.DataAccessLayer
             #region Cap Check
             if (encryptedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
-                        Math.Round((double)encryptedSize / 1024.0 / 1024.0, 2))), null);
+                        Math.Round(encryptedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
             }
 
             if (compressedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
-                        Math.Round((double)compressedSize / 1024.0 / 1024.0, 2))), null);
+                        Math.Round(compressedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
             }
 
             if (decompressedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
-                        Math.Round((double)decompressedSize / 1024.0 / 1024.0, 2))), null);
+                        Math.Round(decompressedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
             }
             #endregion
 
             // Take care of relative path and folders
-            item.Filename = (item.Filename.Trim() == "") ? "unnamed" + item.Index : item.Filename;
-
-            // Take care of relative path and folders
-            string path = (saveFilesPath + item.Filename).Replace("\\", "/");
+            string path = DrivePointManager.RemoveDrivePoints((saveFilesPath + item.Filename).Replace("\\", "/"));
 
             string foldersPath = path.Substring(0, path.LastIndexOf("/", StringComparison.Ordinal));
 
@@ -266,7 +282,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="hashMismatchFiles">Vector holding files with CRC mismatch</param>
         /// <param name="errorFiles">Vector holding files ignored</param>
         /// <returns></returns>
-        public static int ProcessFileType2(string packFilePath, string saveFilesPath, IndexItem item, byte[] packKey, Action<ErrorFile, string> fileLoggingCallback)
+        public static int ProcessFileType2(string packFilePath, string saveFilesPath, IndexItem item, byte[] packKey, Action<ErrorItem, string> fileLoggingCallback)
         {
             int valueToReturn = 0;
 
@@ -283,14 +299,14 @@ namespace EterManager.DataAccessLayer
 
             if (encryptedSize <= 0 || compressedSize <= 0 || decompressedSize <= 0)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename, "Invalid encrypted/compressed/decompressed size."), null);
+                fileLoggingCallback(new ErrorItem(item.Filename, "Invalid encrypted/compressed/decompressed size."), null);
                 return 2;
             }
 
             #region Cap Check
             if (encryptedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
                         Math.Round(encryptedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
@@ -298,7 +314,7 @@ namespace EterManager.DataAccessLayer
 
             if (compressedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
                         Math.Round(encryptedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
@@ -306,7 +322,7 @@ namespace EterManager.DataAccessLayer
 
             if (decompressedSize > 629145600)
             {
-                fileLoggingCallback(new ErrorFile(item.Filename,
+                fileLoggingCallback(new ErrorItem(item.Filename,
                     String.Format("Max memory allocation reached, tried to allocate: {0} mb",
                         Math.Round(encryptedSize / 1024.0 / 1024.0, 2))), null);
                 return 2;
@@ -318,7 +334,11 @@ namespace EterManager.DataAccessLayer
             {
                 // Show error msg and cancel operation
                 // AppLog.SendMessage(8, item.Filename, item.ParentFile); TODO
-                fileLoggingCallback(new ErrorFile(item.Filename, "Invalid header."), null);
+                fileLoggingCallback(new ErrorItem(item.Filename, String.Format("Invalid FourCC: {0}. Expected: {1} ({2})",
+                    BitConverter.ToString(fourCc),
+                    BitConverter.ToString(ConstantsBase.LzoFourCc),
+                    Encoding.ASCII.GetString(ConstantsBase.LzoFourCc))),
+                "");
                 return 2;
             }
 
@@ -326,10 +346,7 @@ namespace EterManager.DataAccessLayer
             byte[] rawDataBuffer = IOHelper.ReadFileOffsetToLength(packFilePath, item.Offset + 16, encryptedSize);
 
             // Take care of relative path and folders
-            item.Filename = (item.Filename.Trim() == "") ? "unnamed" + item.Index : item.Filename;
-
-            // Take care of relative path and folders
-            string path = (saveFilesPath + item.Filename).Replace("\\", "/");
+            string path = DrivePointManager.RemoveDrivePoints((saveFilesPath + item.Filename).Replace("\\", "/"));
 
             // uh, I've found a bug. This should be changed... The program now detects new drive points, for example
 
@@ -368,6 +385,11 @@ namespace EterManager.DataAccessLayer
             {
                 // Send message and return error
                 //Logger.LogOutputMessage(Log.LogId.DECRYPTION_FAILED_LOG, args: item.Filename); TODO
+                fileLoggingCallback(new ErrorItem(item.Filename, String.Format("Invalid header after decryption: {0}. Expected: {1} ({2})",
+                    BitConverter.ToString(fourCc),
+                    BitConverter.ToString(ConstantsBase.LzoFourCc),
+                    Encoding.ASCII.GetString(ConstantsBase.LzoFourCc))),
+                "");
                 valueToReturn = 2;
             }
 
@@ -379,7 +401,7 @@ namespace EterManager.DataAccessLayer
             {
                 // Log CRC mismatch
                 // AppLog.SendMessage(2, item.Filename);
-                fileLoggingCallback(new ErrorFile(item.Filename, "Invalid header after decryption."), null);
+                fileLoggingCallback(null, item.Filename);
                 valueToReturn = 1;
             }
 
@@ -405,7 +427,7 @@ namespace EterManager.DataAccessLayer
             if (!File.Exists(filePath))
             {
                 //Logger.LogOutputMessage(Log.LogId.FILE_NOT_FOUND, args: filePath); TODO
-                return null;
+                throw new FileNotFoundException(filePath);
             }
 
             //Read file
@@ -438,8 +460,7 @@ namespace EterManager.DataAccessLayer
                 Array.Copy(decryptedBuffer, 0, headerCCBuffer, 0, 4);
                 if (!headerCCBuffer.SequenceEqual(ConstantsBase.LzoFourCc))
                 {
-                    //Logger.LogOutputMessage(Log.LogId.INDEX_KEY_INCORRECT, args: filePath); TODO
-                    return null;
+                    throw new ErrorReadingIndexException("Wrong index decryption key");
                 }
 
                 //Create buffer without header
@@ -453,8 +474,7 @@ namespace EterManager.DataAccessLayer
                 //Decompression failed?
                 if (!headerCCBuffer.SequenceEqual(ConstantsBase.EterFourCc))
                 {
-                    //Logger.LogOutputMessage(Log.LogId.DECOMPRESSION_FAILED, args: filePath);
-                    return null;
+                    throw new ErrorReadingIndexException("An internal error occured when decompressing");
                 }
 
                 //Return normalized data
@@ -472,7 +492,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="indexKey">Index XTEA key</param>
         /// <param name="parentFile">Parent file</param>
         /// <returns></returns>
-        public static List<IndexItem> DerializeDataToModelList(string filePath, byte[] indexKey, string parentFile)
+        public static List<IndexItem> ReadIndexFile(string filePath, byte[] indexKey, string parentFile)
         {
             byte[] plainData = NormalizeIndexFile(filePath, indexKey);
 
@@ -530,6 +550,22 @@ namespace EterManager.DataAccessLayer
 
                 string fileName = tempFileName.Contains("type\"") ? tempFileName.Substring(0, tempFileName.IndexOf("type\"", StringComparison.Ordinal) - 1) : tempFileName;
 
+                // Fail-safe to make sure the path is valid
+                if (!CrcHelper.GetCrc32HashFromMemoryToByteArray(Encoding.Default.GetBytes(fileName)).SequenceEqual(FilenameCRC))
+                {
+                    for (int j = 1; j < fileName.Length; j++)
+                    {
+                        var newFileName = fileName.Substring(0, j);
+                        if (
+                            CrcHelper.GetCrc32HashFromMemoryToByteArray(Encoding.Default.GetBytes(newFileName)).Reverse().ToArray()
+                                .SequenceEqual(FilenameCRC))
+                        {
+                            fileName = newFileName;
+                            break;
+                        }
+                    }
+                }
+
                 // New drive point?
                 //DPHelper.CheckIfContainsDrivePoint(fileName); TODO
 
@@ -555,7 +591,7 @@ namespace EterManager.DataAccessLayer
         /// <param name="unpackedFilesPath">Path to unpacked files</param>
         /// <param name="indexKey">Index XTEA key</param>
         /// <param name="packKey">Pack XTEA key</param>
-        /// <param name="isQuickRepack">Set true on quick repack</param>
+        /// <param name="errorLogCallBack"></param>
         /// <param name="progressCallback">Callback if progress updates are needed</param>
         /// <returns></returns>
         public static bool BuildIndexAndPackFiles(
@@ -564,7 +600,7 @@ namespace EterManager.DataAccessLayer
             string unpackedFilesPath,
             byte[] indexKey,
             byte[] packKey,
-            Action<ErrorFile> errorLogCallBack,
+            Action<ErrorItem> errorLogCallBack,
             Action<int, int> progressCallback,
             Action fatalErrorCallback)
         {
@@ -588,14 +624,13 @@ namespace EterManager.DataAccessLayer
 
                 // Progress variables
                 double actionProgress = 0;
-                double lastProgressValue = 0;
 
                 // FileOffset holder (EPK stream's length)
                 int fileOffset = 0;
 
                 // Write first header to EIX file
                 fStream.Write(ConstantsBase.EterFourCc, 0, ConstantsBase.EterFourCc.Length);
-                fStream.Write(BitConverter.GetBytes((int)2), 0, 4);
+                fStream.Write(BitConverter.GetBytes(2), 0, 4);
                 fStream.Write(BitConverter.GetBytes(list.Count), 0, 4);
 
                 try
@@ -637,6 +672,7 @@ namespace EterManager.DataAccessLayer
                         fileOffset = (int)epkStream.Length;
 
                         #region File Type Processing
+
                         // Switch through the 3 possible cases
                         switch (item.PackType)
                         {
@@ -669,7 +705,7 @@ namespace EterManager.DataAccessLayer
                                 if (item.PackType == 2)
                                 {
                                     // Get encrypted size (ALWAYS the upper multiple)
-                                    encryptedFileSize = (int)GetUpperMultiple(compressedDataWithHeaderBuffer.Length);
+                                    encryptedFileSize = GetUpperMultiple(compressedDataWithHeaderBuffer.Length);
 
                                     // Resize data to fit encryptedSize
                                     Array.Resize(ref compressedDataWithHeaderBuffer, encryptedFileSize);
@@ -691,12 +727,13 @@ namespace EterManager.DataAccessLayer
                                 epkStream.Write(compressedDataWithHeaderBuffer, 0, compressedDataWithHeaderBuffer.Length);
                                 break;
                         }
+
                         #endregion
 
                         #region Building index file
 
                         // Check if string replacment is needed
-                        string virtualPathFile = _drivePointManager.InsertDrivePoints(item.Filename);
+                        string virtualPathFile = DrivePointManager.InsertDrivePoints(item.Filename);
 
                         // Populate byte[] with data
                         fileIndex = BitConverter.GetBytes(item.Index);
@@ -731,9 +768,6 @@ namespace EterManager.DataAccessLayer
 
                         // Update progress
                         actionProgress = (indexCount / (double)list.Count * 100.0);
-
-                        if (!((actionProgress - lastProgressValue) >= 5)) continue;
-                        lastProgressValue = actionProgress;
                         progressCallback(0, (int)actionProgress);
                     }
                 }

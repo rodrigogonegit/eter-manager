@@ -1,0 +1,100 @@
+﻿<Window x:Class="EterManager.UserInterface.Views.VirtualTreeViewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:System.Windows.Controls;assembly=MultiSelectTreeView"
+        xmlns:viewModels="clr-namespace:EterManager.UserInterface.ViewModels.TreeItem"
+        Title="VirtualTreeViewWindow" Height="305" Width="300">
+    <Window.Resources>
+        <!--_________________ TreeView ItemStructure _______________________-->
+        <HierarchicalDataTemplate DataType="{x:Type viewModels:TreeItemFolderVm}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal" Height="16">
+                <Image Source="/UserInterface\VisualResources\Images\packOfFiles.png" />
+                <TextBlock Text="{Binding DisplayName}" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type viewModels:TreeItemFileVm}">
+            <StackPanel Orientation="Horizontal" Height="16">
+                <Image Source="/UserInterface\VisualResources\Images\item.png" />
+                <TextBlock Text="{Binding DisplayName}" />
+                <TextBlock>
+                    <Run Text=" ["/>
+                    <Run Text="{Binding EterFileParent}"/>
+                    <Run Text="]"/>
+                </TextBlock>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <!--_________________ TreeView ItemStructure END _______________________-->
+
+        <!--_________________ TextBox placeHolder style _______________________-->
+        <Style x:Key="placeHolder" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Grid>
+                            <TextBox Text="{Binding Path=Text,
+                                                RelativeSource={RelativeSource TemplatedParent}, 
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                                 x:Name="textSource" 
+                                 Background="Transparent" 
+                                 Panel.ZIndex="2" />
+                            <TextBox Text="{TemplateBinding Tag}" Background="{TemplateBinding Background}" Panel.ZIndex="1">
+                                <TextBox.Style>
+                                    <Style TargetType="{x:Type TextBox}">
+                                        <Setter Property="Foreground" Value="Transparent"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
+                                                <Setter Property="Foreground" Value="LightGray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+    <Grid>
+        <TextBox IsEnabled="{Binding IsTextboxEnabled}" Tag="Insert filename and press enter..." Style="{StaticResource placeHolder}" Height="23" Margin="10,27,10,0" TextWrapping="Wrap" Text="{Binding SearchFileText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding SearchFileCommand}"/>
+            </TextBox.InputBindings>
+        </TextBox>
+        <controls:MultiSelectTreeView VerticalRulers="True" Margin="10,57,10,27" ItemsSource="{Binding VirtualTreeViewItems}">
+            <controls:MultiSelectTreeView.Resources>
+                <Style TargetType="controls:MultiSelectTreeViewItem">
+                    <Setter Property="controls:Behaviours.DoubleClickBehaviour" Value="{Binding DoubleClickCommand}"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+                <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFE0F0FF" Offset="0"/>
+                    <GradientStop Color="#FFABE0FF" Offset="1"/>
+                </LinearGradientBrush>
+                <LinearGradientBrush x:Key="{x:Static SystemColors.ControlBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFEEEEEE" Offset="0"/>
+                    <GradientStop Color="#FFDDDDDD" Offset="1"/>
+                </LinearGradientBrush>
+            </controls:MultiSelectTreeView.Resources>
+            <controls:MultiSelectTreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}">
+                    <Setter Property="BackgroundInactive" Value="#FF3399FF"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="DisplayName" Value="{Binding DisplayName, Mode=TwoWay}"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    <!--<Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay}"/>-->
+                    <Setter Property="IsVisible" Value="{Binding IsVisible, Mode=TwoWay}"/>
+                    <!--<Setter Property="IsEditable" Value="{Binding IsEditable, Mode=TwoWay}"/>-->
+                    <!--<Setter Property="IsEditing" Value="{Binding IsEditing, Mode=TwoWay}"/>-->
+                    <!--<Setter Property="Remarks" Value="{Binding Remarks, Mode=TwoWay}"/>-->
+                </Style>
+
+            </controls:MultiSelectTreeView.ItemContainerStyle>
+        </controls:MultiSelectTreeView>
+        <TextBlock HorizontalAlignment="Left" Margin="10,6,0,0" TextWrapping="Wrap" Text="Virtual view" VerticalAlignment="Top"/>
+        <TextBlock Margin="10,0,10,6" TextWrapping="Wrap" Text="{Binding State}" Height="16" VerticalAlignment="Bottom"/>
+    </Grid>
+</Window>

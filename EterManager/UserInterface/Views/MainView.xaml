@@ -1,30 +1,44 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:UserControls="clr-namespace:EterManager.UserInterface.Views.UserControls" x:Class="EterManager.UserInterface.Views.MainView"
-        Title="Eter Manager - GunnerMBT ©" Height="424.4" Width="652.8" WindowStartupLocation="CenterScreen">
+        xmlns:util="clr-namespace:EterManager.Utilities"
+        xmlns:userControls="clr-namespace:EterManager.UserInterface.Views.UserControls" x:Class="EterManager.UserInterface.Views.MainView"
+        Title="Eter Manager - GunnerMBT ©" MinHeight="500" MinWidth="750" Height="424.4" Width="652.8" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="223*"/>
-            <RowDefinition Height="89*"/>
+            <RowDefinition Height="86*"/>
+            <RowDefinition Height="45*"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="177*"/>
-            <ColumnDefinition Width="455*"/>
-        </Grid.ColumnDefinitions>
-        <Menu Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2" Margin="0,0,-0.4,0">
+        <Menu Height="25" VerticalAlignment="Top">
             <MenuItem Header="File" >
                 <MenuItem Header="Exit" CommandParameter="EXIT" Command="{Binding OpenWindowCommand}"/>
             </MenuItem>
             <MenuItem Header="Manage" Height="25">
                 <MenuItem Header="Profiles" Command="{Binding OpenWindowCommand}" CommandParameter="PROFILES_MANAGER"/>
-                <MenuItem Header="Packing filters" Command="{Binding OpenWindowCommand}" CommandParameter="PACKING_FILTERS"/>
+                <!--<MenuItem Header="Packing filters" Command="{Binding OpenWindowCommand}" CommandParameter="PACKING_FILTERS"/>-->
+            </MenuItem>
+            <MenuItem Header="Tools" >
+                <MenuItem Header="Virtual tree view" CommandParameter="VIRTUAL_TREE_VIEW" Command="{Binding OpenWindowCommand}"/>
             </MenuItem>
         </Menu>
-        <UserControls:IssuesListView Grid.ColumnSpan="2" Margin="0,0,9,29" Grid.RowSpan="2" Height="142" VerticalAlignment="Bottom"/>
-        <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Bottom">
+        <userControls:FilesActionListView  Margin="10,40,19,10" ></userControls:FilesActionListView>
+        <userControls:IssuesListView Margin="0,5,9,38" Grid.Row="1"/>
+        <StatusBar Grid.Row="1" Height="33" VerticalAlignment="Bottom">
             <StatusBarItem>
-                <TextBlock Text="{Binding SelectedProfile.Name}"/>
+                <TextBlock Text="{Binding SelectedWorkingProfile.Name}"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding CurrentAppVersion}"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ComboBox IsSynchronizedWithCurrentItem="True" IsEnabled="{Binding CanChangeProfile}" DisplayMemberPath="Name">
+                    <ComboBox.ItemsSource>
+                        <Binding Path="ProfileList" Mode="OneWay"/>
+                    </ComboBox.ItemsSource>
+                    <ComboBox.SelectedValue>
+                        <Binding Path="SelectedWorkingProfile" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"/>
+                    </ComboBox.SelectedValue>
+                </ComboBox>
             </StatusBarItem>
         </StatusBar>
     </Grid>

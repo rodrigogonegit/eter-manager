@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.IO;
+using System.Windows.Threading;
+using Caliburn.Micro;
 using EterManager.Services;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
@@ -34,6 +36,7 @@ namespace EterManager
             _container.Bind<ILogger>().To<Logger>().InSingletonScope();
             _container.Bind<ILocale>().To<Locale>().InSingletonScope();
             _container.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
+            _container.Bind<IDrivePointManager>().To<DrivePointManager>().InSingletonScope();
         }
 
         private void InitializeMainView()
@@ -46,6 +49,16 @@ namespace EterManager
         {
             var obj = _container.Get<T>();
             return obj;
+        }
+
+        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            string exp = e.Exception.ToString();
+
+            if (e.Exception.InnerException != null)
+                exp += e.Exception.InnerException.ToString();
+
+            File.WriteAllText("errorLog.txt", exp);
         }
     }
 }
