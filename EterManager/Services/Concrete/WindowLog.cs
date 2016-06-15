@@ -10,7 +10,7 @@ using System.Windows;
 namespace EterManager.Services.Concrete
 {
 
-    class Logger : ILogger
+    class WindowLog : IWindowLog
     {
         #region ILocale Members
 
@@ -33,14 +33,14 @@ namespace EterManager.Services.Concrete
 
         #region Constructors
 
-        public Logger()
+        public WindowLog()
         {
             Issues = new List<Issue>();
         }
 
         #endregion
 
-        #region ILogger Members
+        #region IWindowLog Members
 
         public void Information(string key, string context, params object[] data)
         {

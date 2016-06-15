@@ -12,11 +12,11 @@ namespace EterManager.Services
     /// <summary>
     /// TODO: IMPLEMENT WEAK-LINKED APPENDERS
     /// </summary>
-    interface ILogger
+    interface IWindowLog
     {
         List<Issue> Issues { get; set; }
 
-        event Logger.IssuesChangedEventHandler IssuesChanged;
+        event WindowLog.IssuesChangedEventHandler IssuesChanged;
 
         /// <summary>
         /// Creates debug level message
