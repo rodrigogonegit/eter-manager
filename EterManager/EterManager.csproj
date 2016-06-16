@@ -125,6 +125,7 @@
     <Compile Include="UserInterface\Converters\ValueConverterBase.cs" />
     <Compile Include="UserInterface\Helpers\ListBoxItemHelper.cs" />
     <Compile Include="UserInterface\ViewModels\ClientProfileVm.cs" />
+    <Compile Include="UserInterface\ViewModels\ExceptionWindowViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\FilesActionVm.cs" />
     <Compile Include="UserInterface\ViewModels\IssuesListVm.cs" />
     <Compile Include="UserInterface\ViewModels\MainWindowVm.cs" />
@@ -135,6 +136,9 @@
     <Compile Include="UserInterface\ViewModels\UpdateMenuViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\VirtualTreeViewWindowVm.cs" />
     <Compile Include="UserInterface\ViewModels\WorkingItemVm.cs" />
+    <Compile Include="UserInterface\Views\ExceptionWindow.xaml.cs">
+      <DependentUpon>ExceptionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\Views\IndexDetailsWindow.xaml.cs">
       <DependentUpon>IndexDetailsWindow.xaml</DependentUpon>
     </Compile>
@@ -183,6 +187,10 @@
     <Compile Include="Utilities\TreeItemHelpers.cs" />
     <Compile Include="Utilities\UserInput.cs" />
     <Compile Include="Utilities\Xtea.cs" />
+    <Page Include="UserInterface\Views\ExceptionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserInterface\Views\IndexDetailsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -354,6 +362,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UserInterface\VisualResources\Images\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\stop_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\error_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\distributor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\send.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

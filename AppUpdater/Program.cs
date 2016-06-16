@@ -59,7 +59,6 @@ namespace AppUpdater
             {
                 Console.WriteLine(ex.ToString());
             }
-
         }
     }
 }

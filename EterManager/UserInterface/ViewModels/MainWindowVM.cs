@@ -102,6 +102,10 @@ namespace EterManager.UserInterface.ViewModels
                     AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
                 }
             };
+
+            var inst = ViewManager.ShowWindow<ExceptionWindow>();
+            (inst.DataContext as ExceptionWindowViewModel).Exception = new AccessViolationException("The exception that is thrown when there is an attempt to read or write protected memory.", new ArithmeticException("Overflow operation"));
+            
         }
 
         /// <summary>

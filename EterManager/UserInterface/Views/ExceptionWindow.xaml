@@ -1,0 +1,31 @@
+﻿<Window x:Class="EterManager.UserInterface.Views.ExceptionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EterManager.UserInterface.Views"
+        mc:Ignorable="d"
+        Title="Error - Unexpected exception occured" Height="230.77" Width="597.231" ResizeMode="NoResize" WindowStyle="ToolWindow">
+    <Grid>
+
+        <Image Source="../VisualResources/Images/stop_error.png" Margin="10,10,0,0" RenderTransformOrigin="0.803,0.522" Height="37" VerticalAlignment="Top" HorizontalAlignment="Left" Width="41"/>
+        <TextBlock Margin="67,18,10,136" TextWrapping="Wrap" Text="{Binding Exception.Message}" FontSize="14"/>
+        <Expander Header="Inner Exception" HorizontalAlignment="Left" Margin="10,72,0,41" Width="523">
+            <Grid>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Exception.InnerException.Message}"/>
+            </Grid>
+        </Expander>
+        <Button HorizontalAlignment="Left" Margin="10,0,0,10" Width="121" Height="24" VerticalAlignment="Bottom">
+            <Button.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="../VisualResources/Images/send.png" Margin="-10,0,10,0"/>
+                    <TextBlock Grid.Column="1" Text="Send report"></TextBlock>
+                </Grid>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

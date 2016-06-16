@@ -83,13 +83,13 @@ namespace EterManager.Services.Concrete
             var thisApp = Assembly.GetExecutingAssembly();
             AssemblyName name = new AssemblyName(thisApp.FullName);
 
-            //if (latestVersion > name.Version)
-            //{
+            if (latestVersion > name.Version)
+            {
                 if (NewVersionFound != null)
                     NewVersionFound(this, EventArgs.Empty);
-            //}
+            }
 
-        }
+    }
 
         /// <summary>
         /// Downloads the version package.
