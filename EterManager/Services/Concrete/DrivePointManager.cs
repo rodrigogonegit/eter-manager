@@ -14,8 +14,8 @@ namespace EterManager.Services.Concrete
     {
         public Dictionary<string, string> DrivePoints { get; set; }
 
-        // Logger
-        private readonly ILogger _logger = ((App) Application.Current).GetInstance<ILogger>();
+        // WindowLog
+        private readonly IWindowLog _windowLog = ((App) Application.Current).GetInstance<IWindowLog>();
 
         public void InsertDrivePoints(ref string toCheck)
         {
@@ -93,7 +93,7 @@ namespace EterManager.Services.Concrete
                 string drivePoint = String.Format("{0}={1}/{2}", folders[1], driveName, folders[1]);
                 DataAccessLayer.DrivePointsDal.AddDrivePoint(drivePoint);
                 DrivePoints = DataAccessLayer.DrivePointsDal.GetDrivePoints();
-                _logger.Information("NEW_DRIVE_POINT_ADDED", null, drivePoint);
+                _windowLog.Information("NEW_DRIVE_POINT_ADDED", null, drivePoint);
 
             }
         }

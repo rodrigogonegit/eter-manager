@@ -45,9 +45,9 @@ namespace EterManager.UserInterface.ViewModels
             if (Process.GetCurrentProcess().IsVisualStudioDesigner())
                 return;
 
-            IssuesList = CollectionViewSource.GetDefaultView(Logger.Issues);
+            IssuesList = CollectionViewSource.GetDefaultView(WindowLog.Issues);
             IssuesList.Filter = FilterCollection;
-            Logger.IssuesChanged += IssuesChanged;
+            WindowLog.IssuesChanged += IssuesChanged;
 
             IsShowErrors = true;
             IsShowMessages = true;
@@ -114,7 +114,7 @@ namespace EterManager.UserInterface.ViewModels
         private void ClearIssueListAction()
         {
             // Clear list
-            Logger.Issues.Clear();
+            WindowLog.Issues.Clear();
 
             // Reset counters
             ErrorCount = 0;

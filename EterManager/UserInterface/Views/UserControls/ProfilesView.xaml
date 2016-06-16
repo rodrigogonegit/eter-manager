@@ -16,7 +16,7 @@
             <ColumnDefinition Width="51*"/>
             <ColumnDefinition Width="131*"/>
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="0" SelectedItem="{Binding SelectedProfile}" Margin="10,31,10,10.4" ItemsSource="{Binding ProfileList}">
+        <ListBox Grid.Column="0" SelectedItem="{Binding SelectedProfile}" Margin="10,31,10,10" ItemsSource="{Binding ProfileList}" MouseDoubleClick="ListBox_MouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
@@ -32,7 +32,7 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Use selected profile" Command="{Binding SelectProfileCommand}">
+                    <MenuItem Header="Use selected profile (double-click)" Command="{Binding SelectProfileCommand}">
                         <MenuItem.Icon>
                             <Image Width="16" Height="16" Source="/UserInterface\VisualResources\Images\accept_male_user.png"></Image>
                         </MenuItem.Icon>
@@ -50,7 +50,10 @@
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
+        <!-- Profiles list -->
         <TextBlock Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Profiles available:" VerticalAlignment="Top" Height="16" Width="91" Grid.ColumnSpan="2"/>
+
+        <!-- Selected profile -->
         <GroupBox Grid.Column="1" Header="Selected Profile" Margin="10,10,7.4,9.4">
             <Grid>
                 <Grid.ColumnDefinitions>

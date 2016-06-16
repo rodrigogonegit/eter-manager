@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
 using EterManager.Base;
@@ -38,6 +39,19 @@ namespace EterManager.UserInterface.ViewModels
 
             // Command initializer
             InitializeCommands();
+
+            // Initialize updating service
+            InitializeVersionService();
+
+            // Check for new versions
+            try
+            {
+                AppUpdater.CheckVersions();
+            }
+            catch (Exception ex)
+            {
+                WindowLog.Error("SERVER_DOWN", "App");
+            }
         }
 
         /// <summary>
@@ -76,6 +90,18 @@ namespace EterManager.UserInterface.ViewModels
                 // To make sure every other class is udpated
                 Handle(SelectedWorkingProfile);
             }
+        }
+
+        private void InitializeVersionService()
+        {
+            AppUpdater.NewVersionFound += (sender, args) =>
+            {
+                if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    AppUpdater.DownloadLatestVersion();
+                    AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
+                }
+            };
         }
 
         /// <summary>
@@ -137,8 +163,11 @@ namespace EterManager.UserInterface.ViewModels
                     }
                     ViewManager.ShowWindow<VirtualTreeViewWindow>(false, String.Format("Virtual Tree View - {0}", SelectedWorkingProfile.Name));
                     break;
+                case "UPDATE_WINDOW":
+                    ViewManager.ShowWindow<UpdateMenuView>();
+                    break;
                 default:
-                    Logger.Critical(new[] { "INTERNAL_ERROR", "Error at OpenWindowAction with argument:", param });
+                    WindowLog.Critical(new[] { "INTERNAL_ERROR", "Error at OpenWindowAction with argument:", param });
                     break;
             }
         }
@@ -263,6 +292,29 @@ namespace EterManager.UserInterface.ViewModels
         public void OnWindowClose(object sender, CancelEventArgs cancelEventArgs)
         {
             Properties.Settings.Default.Save();
+        }
+
+        #endregion
+
+        #region AppUpdater Events
+
+        /// <summary>
+        /// Handles OnDownloadCompleted
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="AsyncCompletedEventArgs"/> instance containing the event data.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private void AppUpdaterOnDownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            if (Properties.Settings.Default.UpdateMode == "ASK_INSTALL" && MessageBox.Show("An update has been downloaded", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                AppUpdater.InstallLatestVersion();
+            }
+            else if (Properties.Settings.Default.UpdateMode == "AUTO")
+            {
+                AppUpdater.InstallLatestVersion();
+            }
+
         }
 
         #endregion

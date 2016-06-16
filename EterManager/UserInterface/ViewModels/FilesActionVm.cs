@@ -132,7 +132,7 @@ namespace EterManager.UserInterface.ViewModels
             }
             catch (ArgumentException ex)
             {
-                Logger.Error("COULD_NOT_MONITOR_DIR", null, MainWindowVm.Instance.SelectedWorkingProfile.WorkingDirectory);
+                WindowLog.Error("COULD_NOT_MONITOR_DIR", null, MainWindowVm.Instance.SelectedWorkingProfile.WorkingDirectory);
             }
         }
 
@@ -220,15 +220,13 @@ namespace EterManager.UserInterface.ViewModels
         /// </summary>
         public void UpdateListViewOnWorkingItemProcessed()
         {
-            if (OnWorkingItemProcessedEvent == null) return;
-
-            OnWorkingItemProcessedEvent();
+            OnWorkingItemProcessedEvent?.Invoke();
         }
 
         /// <summary>
         /// Called when the user double clicks
         /// </summary>
-        public void MouseDoubleClick()
+        public void WorkingItemDoubleClick()
         {
             if (SelectedWorkingItems == null || !SelectedWorkingItems.Any()) return;
 
@@ -386,7 +384,7 @@ namespace EterManager.UserInterface.ViewModels
             }
             catch (DirectoryNotFoundException ex)
             {
-                Logger.Error("DIR_NOT_FOUND", null, MainWindowVm.Instance.SelectedWorkingProfile.WorkingDirectory);
+                WindowLog.Error("DIR_NOT_FOUND", null, MainWindowVm.Instance.SelectedWorkingProfile.WorkingDirectory);
             }
 
             try
@@ -406,7 +404,7 @@ namespace EterManager.UserInterface.ViewModels
             }
             catch (DirectoryNotFoundException ex)
             {
-                Logger.Error("DIR_NOT_FOUND", null, MainWindowVm.Instance.SelectedWorkingProfile.UnpackDirectory);
+                WindowLog.Error("DIR_NOT_FOUND", null, MainWindowVm.Instance.SelectedWorkingProfile.UnpackDirectory);
             }
 
             WorkingItemsList = new ObservableImmutableList<WorkingItemVm>(WorkingItemsList.OrderBy(x => x.DisplayName));

@@ -8,5 +8,11 @@
     <Setting Name="MaxSimFiles" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="UpdateMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AUTO</Value>
+    </Setting>
+    <Setting Name="LastVersionCheck" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

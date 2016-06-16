@@ -13,9 +13,10 @@ namespace EterManager.Base
     public class ViewModelBase : INotifyPropertyChanged
     {
         internal IViewManager ViewManager = ((App)Application.Current).GetInstance<IViewManager>();
-        internal ILogger Logger = ((App)Application.Current).GetInstance<ILogger>();
+        internal IWindowLog WindowLog = ((App)Application.Current).GetInstance<IWindowLog>();
         internal ILocale Locale = ((App)Application.Current).GetInstance<ILocale>();
         internal IEventAggregator EventAggregator = ((App)Application.Current).GetInstance<IEventAggregator>();
+        internal IAppUpdater AppUpdater = ((App)Application.Current).GetInstance<IAppUpdater>();
 
         #region INPC
         public event PropertyChangedEventHandler PropertyChanged;

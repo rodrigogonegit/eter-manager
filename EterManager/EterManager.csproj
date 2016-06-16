@@ -37,6 +37,10 @@
     <Reference Include="MultiSelectTreeView">
       <HintPath>..\Libs\MultiSelectTreeView.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\Libs\Ninject.dll</HintPath>
     </Reference>
@@ -66,8 +70,9 @@
     <Reference Include="WpfAnimatedGif">
       <HintPath>..\Libs\WpfAnimatedGif.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\packages\Xceed.Wpf.Toolkit.2.4.14475.10340\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.0.16174.17450, Culture=neutral, PublicKeyToken=ba83ff368b7563c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.3.0.16174.17450\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +84,9 @@
     <Compile Include="Base\ViewModelBase.cs" />
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
+    <Compile Include="Models\VersionModel.cs" />
+    <Compile Include="Services\Abstract\IAppUpdater.cs" />
+    <Compile Include="Services\Concrete\AppUpdater.cs" />
     <Compile Include="UserInterface\Converters\ByteArrayToHexStringConverter.cs" />
     <Compile Include="DataAccessLayer\DrivePointsDal.cs" />
     <Compile Include="DataAccessLayer\EterFilesDal.cs" />
@@ -93,11 +101,11 @@
     <Compile Include="Models\TreeItem.cs" />
     <Compile Include="Services\Abstract\IDrivePointManager.cs" />
     <Compile Include="Services\Abstract\ILocale.cs" />
-    <Compile Include="Services\Abstract\ILogger.cs" />
+    <Compile Include="Services\Abstract\IWindowLog.cs" />
     <Compile Include="Services\Abstract\IViewManager.cs" />
     <Compile Include="Services\Concrete\DrivePointManager.cs" />
     <Compile Include="Services\Concrete\Locale.cs" />
-    <Compile Include="Services\Concrete\Logger.cs" />
+    <Compile Include="Services\Concrete\WindowLog.cs" />
     <Compile Include="Services\Concrete\ViewManager.cs" />
     <Compile Include="Services\Resources\BrushResourceItem.cs" />
     <Compile Include="Services\Resources\ColorResourceItem.cs" />
@@ -124,6 +132,7 @@
     <Compile Include="UserInterface\ViewModels\TreeItem\ITreeViewItem.cs" />
     <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFileVm.cs" />
     <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFolderVm.cs" />
+    <Compile Include="UserInterface\ViewModels\UpdateMenuViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\VirtualTreeViewWindowVm.cs" />
     <Compile Include="UserInterface\ViewModels\WorkingItemVm.cs" />
     <Compile Include="UserInterface\Views\IndexDetailsWindow.xaml.cs">
@@ -140,6 +149,9 @@
     </Compile>
     <Compile Include="UserInterface\Views\ProfileManagerWindow.xaml.cs">
       <DependentUpon>ProfileManagerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Views\UpdateMenuView.xaml.cs">
+      <DependentUpon>UpdateMenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\Views\UserControls\FilesActionListView.xaml.cs">
       <DependentUpon>FilesActionListView.xaml</DependentUpon>
@@ -188,6 +200,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterface\Views\ProfileManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Views\UpdateMenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -277,6 +293,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

@@ -58,7 +58,7 @@ namespace EterManager.DataAccessLayer
             {
                 if (item.Size < 16 && item.PackType > 0)
                 {
-                    //Logger.LogOutputMessage(Log.LogId.FILE_SIZE_TOO_SMALL, args: new object[] { item.Filename, item.Size }); TODO
+                    //WindowLog.LogOutputMessage(Log.LogId.FILE_SIZE_TOO_SMALL, args: new object[] { item.Filename, item.Size }); TODO
                     continue;
                 }
 
@@ -91,6 +91,15 @@ namespace EterManager.DataAccessLayer
                     // XTEA encrypted and LZO compressed file
                     case 2: 
                         operationResult = ProcessFileType2(
+                            packFile.FullName,
+                            String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
+                            item,
+                            packKey,
+                            fileLoggingCallback);
+                        break;
+                    // Panama encryption
+                    case 3:
+                        operationResult = ProcessFileType3(
                             packFile.FullName,
                             String.Format("{0}{1}/", saveFilesPath, StringHelpers.TrimExtension(packFile.Name)),
                             item,
@@ -146,7 +155,7 @@ namespace EterManager.DataAccessLayer
             {
                 if (IOHelper.IsFileLocked(path))
                 {
-                    //Logger.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
+                    //WindowLog.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
                     return 2;
                 }
                 File.Delete(path);
@@ -249,7 +258,7 @@ namespace EterManager.DataAccessLayer
             {
                 if (IOHelper.IsFileLocked(path))
                 {
-                    //Logger.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
+                    //WindowLog.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
                     return 2;
                 }
                 File.Delete(path);
@@ -360,7 +369,7 @@ namespace EterManager.DataAccessLayer
             {
                 if (IOHelper.IsFileLocked(path))
                 {
-                    //Logger.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
+                    //WindowLog.LogOutputMessage(Log.LogId.FILE_OPENED_BY_EXTERNAL_PROCESS_LOG, args: path); TODO
                     return 2;
                 }
                 File.Delete(path);
@@ -384,7 +393,7 @@ namespace EterManager.DataAccessLayer
             if (!headerAfterDecryption.SequenceEqual(ConstantsBase.LzoFourCc))
             {
                 // Send message and return error
-                //Logger.LogOutputMessage(Log.LogId.DECRYPTION_FAILED_LOG, args: item.Filename); TODO
+                //WindowLog.LogOutputMessage(Log.LogId.DECRYPTION_FAILED_LOG, args: item.Filename); TODO
                 fileLoggingCallback(new ErrorItem(item.Filename, String.Format("Invalid header after decryption: {0}. Expected: {1} ({2})",
                     BitConverter.ToString(fourCc),
                     BitConverter.ToString(ConstantsBase.LzoFourCc),
@@ -413,6 +422,21 @@ namespace EterManager.DataAccessLayer
             return valueToReturn;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packFilePath"></param>
+        /// <param name="saveFilesPath"></param>
+        /// <param name="item"></param>
+        /// <param name="packKey"></param>
+        /// <param name="fileLoggingCallback"></param>
+        /// <returns></returns>
+        public static int ProcessFileType3(string packFilePath, string saveFilesPath, IndexItem item, byte[] packKey,
+            Action<ErrorItem, string> fileLoggingCallback)
+        {
+            return 0;
+        }
+
         #endregion
 
         /// <summary>
@@ -426,7 +450,7 @@ namespace EterManager.DataAccessLayer
             //File exists?
             if (!File.Exists(filePath))
             {
-                //Logger.LogOutputMessage(Log.LogId.FILE_NOT_FOUND, args: filePath); TODO
+                //WindowLog.LogOutputMessage(Log.LogId.FILE_NOT_FOUND, args: filePath); TODO
                 throw new FileNotFoundException(filePath);
             }
 
@@ -513,7 +537,7 @@ namespace EterManager.DataAccessLayer
 
             if (indexVersion != 2)
             {
-                //Logger.LogOutputMessage(Log.LogId.ETER_INDEX_WRONG_IDX_VERSION_LOG, args: fileCount); TODO
+                //WindowLog.LogOutputMessage(Log.LogId.ETER_INDEX_WRONG_IDX_VERSION_LOG, args: fileCount); TODO
                 return null;
             }
 
@@ -773,7 +797,7 @@ namespace EterManager.DataAccessLayer
                 }
                 catch (Exception ex)
                 {
-                    //Logger.LogExceptioToFile(ex.ToString()); TODO
+                    //WindowLog.LogExceptioToFile(ex.ToString()); TODO
                     fatalErrorCallback();
                     throw;
                 }

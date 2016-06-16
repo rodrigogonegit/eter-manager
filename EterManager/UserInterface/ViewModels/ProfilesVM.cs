@@ -99,6 +99,18 @@ namespace EterManager.UserInterface.ViewModels
 
         #endregion
 
+        #region Methods
+
+        public void ProfileListBoxDoubleClick()
+        {
+            if (SelectedProfile == null) return;
+
+            // Make sure everything else is notified of action
+            SelectProfileAction();
+        }
+
+        #endregion
+
         #region Commands
 
         #region Command Actions
@@ -198,25 +210,13 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Command Interfaces
 
-        public ICommand AddProfileCommand
-        {
-            get { return _addProfile; }
-        }
+        public ICommand AddProfileCommand => _addProfile;
 
-        public ICommand RemoveProfileCommand
-        {
-            get { return _removeProfile; }
-        }
+        public ICommand RemoveProfileCommand => _removeProfile;
 
-        public ICommand SelectProfileCommand
-        {
-            get { return _selectProfile; }
-        }
+        public ICommand SelectProfileCommand => _selectProfile;
 
-        public ICommand SaveCommand
-        {
-            get { return _saveProfile; }
-        }
+        public ICommand SaveCommand => _saveProfile;
 
         #endregion
 

@@ -10,7 +10,7 @@
             <RowDefinition Height="45*"/>
         </Grid.RowDefinitions>
         <Menu Height="25" VerticalAlignment="Top">
-            <MenuItem Header="File" >
+            <MenuItem Header="File">
                 <MenuItem Header="Exit" CommandParameter="EXIT" Command="{Binding OpenWindowCommand}"/>
             </MenuItem>
             <MenuItem Header="Manage" Height="25">
@@ -20,6 +20,7 @@
             <MenuItem Header="Tools" >
                 <MenuItem Header="Virtual tree view" CommandParameter="VIRTUAL_TREE_VIEW" Command="{Binding OpenWindowCommand}"/>
             </MenuItem>
+            <MenuItem Header="Update menu" CommandParameter="UPDATE_WINDOW" Command="{Binding OpenWindowCommand}"/>
         </Menu>
         <userControls:FilesActionListView  Margin="10,40,19,10" ></userControls:FilesActionListView>
         <userControls:IssuesListView Margin="0,5,9,38" Grid.Row="1"/>

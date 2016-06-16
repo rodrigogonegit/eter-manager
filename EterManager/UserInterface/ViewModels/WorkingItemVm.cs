@@ -181,7 +181,7 @@ namespace EterManager.UserInterface.ViewModels
             if (ItemState != State.Ready && ItemState != State.ReadyWithErrors && ItemState != State.QueueWaiting && ItemState != State.CriticalError)
             {
                 // If is file being processed already, ignore
-                //Logger.LogOutputMessage(Log.LogId.FILE_BEING_PROCESSED_ALREADY, args: this.DisplayName);
+                //WindowLog.LogOutputMessage(Log.LogId.FILE_BEING_PROCESSED_ALREADY, args: this.DisplayName);
                 return false;
             }
 
@@ -389,32 +389,32 @@ namespace EterManager.UserInterface.ViewModels
                     }
                     catch (ErrorReadingIndexException ex)
                     {
-                        Logger.Error("ETER_WRONG_INDEX_KEY", DisplayName);
+                        WindowLog.Error("ETER_WRONG_INDEX_KEY", DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (OutOfMemoryException ex)
                     {
-                        Logger.Warning("FILE_TOO_BIG", DisplayName);
+                        WindowLog.Warning("FILE_TOO_BIG", DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (EterPackFileNotFoundException ex)
                     {
-                        Logger.Error("ETER_EPK_FILE_NOT_FOUND", DisplayName);
+                        WindowLog.Error("ETER_EPK_FILE_NOT_FOUND", DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (FileNotFoundException ex)
                     {
-                        Logger.Error("FILE_NOT_FOUND", DisplayName, new object[] {ex.FileName});
+                        WindowLog.Error("FILE_NOT_FOUND", DisplayName, new object[] {ex.FileName});
                         SetItemState(State.CriticalError);
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        Logger.Error("COULD_NOT_ACCESS_FILE", DisplayName, DisplayName);
+                        WindowLog.Error("COULD_NOT_ACCESS_FILE", DisplayName, DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (System.IO.IOException ex)
                     {
-                        Logger.Error("ERROR_WITH_CUSTOM_MSG", DisplayName, ex.Message);
+                        WindowLog.Error("ERROR_WITH_CUSTOM_MSG", DisplayName, ex.Message);
                         SetItemState(State.CriticalError);
                     }
                 });
@@ -443,7 +443,7 @@ namespace EterManager.UserInterface.ViewModels
                     failedCount += Convert.ToInt32(item.Arg) - 1;
                 }
 
-                Logger.Information("ETER_UNPACK_RESULT", DisplayName, _successCounter, HashMismatchFiles.Count, failedCount);
+                WindowLog.Information("ETER_UNPACK_RESULT", DisplayName, _successCounter, HashMismatchFiles.Count, failedCount);
             }
                 
 
@@ -496,7 +496,7 @@ namespace EterManager.UserInterface.ViewModels
             if (File.Exists(packFilePath))
             {
                 // File already packed, but will be overwritten
-                Logger.Warning("FILE_ALREADY_PACKED_BUT_OVER", Filename);
+                WindowLog.Warning("FILE_ALREADY_PACKED_BUT_OVER", Filename);
                 File.Delete(packFilePath);
             }
 
@@ -579,27 +579,27 @@ namespace EterManager.UserInterface.ViewModels
                     }
                     catch (OutOfMemoryException ex)
                     {
-                        Logger.Warning("FILE_TOO_BIG", DisplayName);
+                        WindowLog.Warning("FILE_TOO_BIG", DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (EterPackFileNotFoundException ex)
                     {
-                        Logger.Error("ETER_EPK_FILE_NOT_FOUND", DisplayName);
+                        WindowLog.Error("ETER_EPK_FILE_NOT_FOUND", DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (FileNotFoundException ex)
                     {
-                        Logger.Error("FILE_NOT_FOUND", DisplayName, new object[] {ex.FileName});
+                        WindowLog.Error("FILE_NOT_FOUND", DisplayName, new object[] {ex.FileName});
                         SetItemState(State.CriticalError);
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        Logger.Error("COULD_NOT_ACCESS_FILE", DisplayName, DisplayName);
+                        WindowLog.Error("COULD_NOT_ACCESS_FILE", DisplayName, DisplayName);
                         SetItemState(State.CriticalError);
                     }
                     catch (System.IO.IOException ex)
                     {
-                        Logger.Error("ERROR_WITH_CUSTOM_MSG", DisplayName, ex.Message);
+                        WindowLog.Error("ERROR_WITH_CUSTOM_MSG", DisplayName, ex.Message);
                         SetItemState(State.CriticalError);
                     }
                 });
@@ -607,7 +607,7 @@ namespace EterManager.UserInterface.ViewModels
             SetItemState(ErrorList.Count > 0 ? State.ReadyWithErrors : State.Ready);
 
             ActionProgress = 100;
-            Logger.Information("ETER_PACK_RESULT", DisplayName, new object[] { _successCounter, HashMismatchFiles.Count, ErrorList.Count });
+            WindowLog.Information("ETER_PACK_RESULT", DisplayName, new object[] { _successCounter, HashMismatchFiles.Count, ErrorList.Count });
             AfterLongAction(param);
         }
 

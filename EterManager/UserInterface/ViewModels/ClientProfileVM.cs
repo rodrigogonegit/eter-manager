@@ -75,7 +75,7 @@ namespace EterManager.UserInterface.ViewModels
                 _profile.Save();
 
                 if (log)
-                    Logger.Information("PROFILE_SAVED", null, Name);
+                    WindowLog.Information("PROFILE_SAVED", null, Name);
             }
             catch (ProfileNameAlreadyExistsException e)
             {
@@ -84,7 +84,7 @@ namespace EterManager.UserInterface.ViewModels
             }
             catch (IOException e)
             {
-                Logger.Error("COULD_NOT_ACCESS_FILE", String.Format("{0}{1}.xml", ConstantsBase.ProfilesPath, Name), e.Message);
+                WindowLog.Error("COULD_NOT_ACCESS_FILE", String.Format("{0}{1}.xml", ConstantsBase.ProfilesPath, Name), e.Message);
             }
         }
 

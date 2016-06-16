@@ -13,7 +13,7 @@ namespace EterManager.Utilities
         /// <summary>
         /// Reference to the logger
         /// </summary>
-        private static ILogger _logger = ((App)Application.Current).GetInstance<ILogger>();
+        private static IWindowLog _windowLog = ((App)Application.Current).GetInstance<IWindowLog>();
 
         /// <summary>
         /// Read input file to byte array using a Filestream
@@ -214,11 +214,11 @@ namespace EterManager.Utilities
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.Error("ERROR_READING_PATH", null, dirPath);
+                _windowLog.Error("ERROR_READING_PATH", null, dirPath);
             }
             catch (DirectoryNotFoundException ex)
             {
-                _logger.Error("DIR_NOT_FOUND", null, dirPath);
+                _windowLog.Error("DIR_NOT_FOUND", null, dirPath);
             }
 
             return new List<FileInfo>();

@@ -5,6 +5,10 @@ using EterManager.Services.Abstract;
 
 namespace EterManager.Services.Concrete
 {
+    /// <summary>
+    /// Manages all secondary view instances
+    /// </summary>
+    /// <seealso cref="EterManager.Services.Abstract.IViewManager" />
     class ViewManager : IViewManager
     {
         /// <summary>

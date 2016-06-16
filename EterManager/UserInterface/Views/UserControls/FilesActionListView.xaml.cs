@@ -11,13 +11,13 @@ namespace EterManager.UserInterface.Views.UserControls
     public partial class FilesActionListView
     {
         // Percentages
-        private double state = 0.1;
-        private double filename = 0.25;
-        private double progress = 0.3;
-        private double actions = 0.20;
-        private double PackFilter = 0.12;
+        private double _state = 0.1;
+        private double _filename = 0.25;
+        private double _progress = 0.3;
+        private double _actions = 0.20;
+        private double _packFilter = 0.12;
 
-        private FilesActionVm _dataContext;
+        private readonly FilesActionVm _dataContext;
 
 
         public FilesActionListView()
@@ -40,11 +40,11 @@ namespace EterManager.UserInterface.Views.UserControls
             var lv = (ListView) sender;
             var gv = lv.View as GridView;
 
-            gv.Columns[0].Width = state * lv.ActualWidth;
-            gv.Columns[1].Width = filename * lv.ActualWidth;
-            gv.Columns[2].Width = progress * lv.ActualWidth;
-            gv.Columns[3].Width = actions * lv.ActualWidth;
-            gv.Columns[4].Width = PackFilter * lv.ActualWidth;
+            gv.Columns[0].Width = _state * lv.ActualWidth;
+            gv.Columns[1].Width = _filename * lv.ActualWidth;
+            gv.Columns[2].Width = _progress * lv.ActualWidth;
+            gv.Columns[3].Width = _actions * lv.ActualWidth;
+            gv.Columns[4].Width = _packFilter * lv.ActualWidth;
         }
 
         private void ListView_Loaded(object sender, RoutedEventArgs e)
@@ -52,11 +52,11 @@ namespace EterManager.UserInterface.Views.UserControls
             var lv = (ListView)sender;
             var gv = lv.View as GridView;
 
-            gv.Columns[0].Width = state * lv.ActualWidth;
-            gv.Columns[1].Width = filename * lv.ActualWidth;
-            gv.Columns[2].Width = progress * lv.ActualWidth;
-            gv.Columns[3].Width = actions * lv.ActualWidth;
-            gv.Columns[4].Width = PackFilter * lv.ActualWidth;
+            gv.Columns[0].Width = _state * lv.ActualWidth;
+            gv.Columns[1].Width = _filename * lv.ActualWidth;
+            gv.Columns[2].Width = _progress * lv.ActualWidth;
+            gv.Columns[3].Width = _actions * lv.ActualWidth;
+            gv.Columns[4].Width = _packFilter * lv.ActualWidth;
         }
 
         public void ForceLvRefresh()
@@ -66,11 +66,12 @@ namespace EterManager.UserInterface.Views.UserControls
 
         private void mainLv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            _dataContext.MouseDoubleClick();
+            _dataContext.WorkingItemDoubleClick();
         }
 
         private void MainLv_OnDrop(object sender, DragEventArgs e)
         {
+            // ReSharper disable once PossibleNullReferenceException
             (DataContext as FilesActionVm).OnFileDropped(e.Data);
         }
     }
