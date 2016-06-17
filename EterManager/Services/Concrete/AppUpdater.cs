@@ -72,10 +72,11 @@ namespace EterManager.Services.Concrete
 
                     content.Dispose();
                 }
-            }
 
-            // Update last check time
-            Properties.Settings.Default.LastVersionCheck = DateTime.Now;
+                // Update last check time
+                Properties.Settings.Default.LastVersionCheck = DateTime.Now;
+                Properties.Settings.Default.Save();
+            }
 
             // Get latest version
             var latestVersion = VersionList.Max(x => x.VersionNumber);
@@ -111,21 +112,14 @@ namespace EterManager.Services.Concrete
             // Iterate URLs
             foreach (var url in latestVersion.DownloadUrls)
             {
-                try
-                {
-                    Directory.CreateDirectory("/tmp/");
+                Directory.CreateDirectory("/tmp/");
 
-                    // Delete file if existent
-                    if (File.Exists(ConstantsBase.UpdatePath))
-                        File.Delete(ConstantsBase.UpdatePath);
+                // Delete file if existent
+                if (File.Exists(ConstantsBase.UpdatePath))
+                    File.Delete(ConstantsBase.UpdatePath);
 
-                    // Download file
-                    _webClient.DownloadFileAsync(new Uri(url), ConstantsBase.UpdatePath);
-                }
-                finally
-                {
-                    
-                }
+                // Download file
+                _webClient.DownloadFileAsync(new Uri(url), ConstantsBase.UpdatePath);
             }
         }
 
@@ -171,6 +165,10 @@ namespace EterManager.Services.Concrete
         /// </value>
         public List<VersionModel> VersionList { get; set; }
 
+        /// <summary>
+        /// Returns a string representation of this
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string build = "";

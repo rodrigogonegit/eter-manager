@@ -47,7 +47,7 @@ namespace EterManager.UserInterface.ViewModels
             // Handle New version found
             AppUpdater.NewVersionFound += (sender, args) =>
             {
-                if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show("There's a new version available. Would you like to install it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     IsUpdating = true;
                     AppUpdater.DownloadLatestVersion();
@@ -105,7 +105,7 @@ namespace EterManager.UserInterface.ViewModels
             }
             catch (WebException)
             {
-                System.Windows.Forms.MessageBox.Show("Could not reach server! Please try again later");
+                System.Windows.Forms.MessageBox.Show("Could not reach server! Please try again later", "Could not reach server", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
             
             CanCheckUpdates = true;

@@ -12,11 +12,18 @@ namespace EterManager.Services.Concrete
 {
     class DrivePointManager : IDrivePointManager
     {
+        /// <summary>
+        /// Holds a list of all the drive points
+        /// </summary>
         public Dictionary<string, string> DrivePoints { get; set; }
 
         // WindowLog
         private readonly IWindowLog _windowLog = ((App) Application.Current).GetInstance<IWindowLog>();
 
+        /// <summary>
+        /// Inserts a new drive point to the dictionary
+        /// </summary>
+        /// <param name="toCheck"></param>
         public void InsertDrivePoints(ref string toCheck)
         {
             if (DrivePoints == null)
@@ -31,6 +38,10 @@ namespace EterManager.Services.Concrete
             }
         }
 
+        /// <summary>
+        /// Inserts a new drive point to the dictionary
+        /// </summary>
+        /// <param name="toCheck"></param>
         public string InsertDrivePoints(string toCheck)
         {
             if (DrivePoints == null)
@@ -46,6 +57,10 @@ namespace EterManager.Services.Concrete
             return toCheck;
         }
 
+        /// <summary>
+        /// Removes a drive point from the path
+        /// </summary>
+        /// <param name="toCheck"></param>
         public void RemoveDrivePoints(ref string toCheck)
         {
             if (DrivePoints == null)
@@ -60,6 +75,10 @@ namespace EterManager.Services.Concrete
             }
         }
 
+        /// <summary>
+        /// Removes a drive point from path
+        /// </summary>
+        /// <param name="toCheck"></param>
         public string RemoveDrivePoints(string toCheck)
         {
             if (DrivePoints == null)
@@ -75,6 +94,10 @@ namespace EterManager.Services.Concrete
             return toCheck;
         }
 
+        /// <summary>
+        /// Checks if path contains a drive point
+        /// </summary>
+        /// <param name="path"></param>
         public void CheckIfContainsDrivePoint(string path)
         {
             if (DrivePoints == null)
