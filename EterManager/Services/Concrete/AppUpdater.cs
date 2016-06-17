@@ -42,16 +42,14 @@ namespace EterManager.Services.Concrete
         /// Checks the version
         /// </summary>
         /// <exception cref="System.NotImplementedException"></exception>
-        public async void CheckVersions()
+        public async Task CheckVersions()
         {
             // If 3 mins passed, update info
             if (Properties.Settings.Default.LastVersionCheck.AddMinutes(3) <= DateTime.Now || !VersionList.Any())
             {
-                // Update last check time
-                Properties.Settings.Default.LastVersionCheck = DateTime.Now;
-
                 // Initialize an HttpWebRequest for the current URL.
                 var webReq = (HttpWebRequest)WebRequest.Create("http://139.59.148.154:8080/");
+                webReq.Timeout = 1000;
 
                 // Send request
                 using (WebResponse response = await webReq.GetResponseAsync())
@@ -75,6 +73,9 @@ namespace EterManager.Services.Concrete
                     content.Dispose();
                 }
             }
+
+            // Update last check time
+            Properties.Settings.Default.LastVersionCheck = DateTime.Now;
 
             // Get latest version
             var latestVersion = VersionList.Max(x => x.VersionNumber);

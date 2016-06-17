@@ -11,6 +11,7 @@ using EterManager.Models;
 using EterManager.UserInterface.Views;
 using EterManager.Utilities;
 using ObservableImmutable;
+using System.Net;
 
 namespace EterManager.UserInterface.ViewModels
 {
@@ -42,16 +43,6 @@ namespace EterManager.UserInterface.ViewModels
 
             // Initialize updating service
             InitializeVersionService();
-
-            // Check for new versions
-            try
-            {
-                AppUpdater.CheckVersions();
-            }
-            catch (Exception ex)
-            {
-                WindowLog.Error("SERVER_DOWN", "App");
-            }
         }
 
         /// <summary>
@@ -92,8 +83,18 @@ namespace EterManager.UserInterface.ViewModels
             }
         }
 
-        private void InitializeVersionService()
+        private async void InitializeVersionService()
         {
+            // Check for new versions
+            try
+            {
+                await AppUpdater.CheckVersions();
+            }
+            catch (WebException ex)
+            {
+                WindowLog.Error("SERVER_DOWN", "App");
+            }
+
             AppUpdater.NewVersionFound += (sender, args) =>
             {
                 if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -102,10 +103,6 @@ namespace EterManager.UserInterface.ViewModels
                     AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
                 }
             };
-
-            var inst = ViewManager.ShowWindow<ExceptionWindow>();
-            (inst.DataContext as ExceptionWindowViewModel).Exception = new AccessViolationException("The exception that is thrown when there is an attempt to read or write protected memory.", new ArithmeticException("Overflow operation"));
-            
         }
 
         /// <summary>

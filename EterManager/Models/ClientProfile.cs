@@ -119,6 +119,8 @@ namespace EterManager.Models
             // Create serializer
             var deserializer = new XmlSerializer(typeof(ClientProfile));
 
+            Directory.CreateDirectory(ConstantsBase.ProfilesPath);
+
             // Loop through directory's files
             foreach (var file in new DirectoryInfo(ConstantsBase.ProfilesPath).GetFiles("*.xml"))
             {
@@ -127,7 +129,7 @@ namespace EterManager.Models
                     list.Add(deserializer.Deserialize(stream) as ClientProfile);
                 }
             }
-
+        
             return list;
         }
 

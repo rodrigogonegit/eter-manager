@@ -56,7 +56,7 @@ namespace EterManager.Services
             _localeTokens.Add("ERROR_SAVING_PROFILE", "An error occured while saving {0} profile.");
             _localeTokens.Add("INTERNAL_ERROR", "INTERNAL ERROR");
             _localeTokens.Add("PROFILE_NAME_ALREADY_EXISTS", "Profile name already exists, please choose a different one.");
-            _localeTokens.Add("SERVER_DOWN", "Could not reach server! It might be down due to maintenance.");
+            _localeTokens.Add("SERVER_DOWN", "Could not reach version server! Try again later.");
         }
 
         #endregion

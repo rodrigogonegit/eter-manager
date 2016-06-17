@@ -22,8 +22,22 @@ namespace EterManager.UserInterface.ViewModels
         public Exception Exception
         {
             get { return _exception; }
-            set { SetProperty(ref _exception, value, "Exception"); }
+            set
+            {
+                ExceptionStr = value.ToString();
+                SetProperty(ref _exception, value, "Exception");
+            }
         }
 
+        private string _exceptionStr;
+
+        /// <summary>
+        /// Exception str
+        /// </summary>
+        public string ExceptionStr
+        {
+            get { return _exceptionStr; }
+            set { SetProperty(ref _exceptionStr, value, "ExceptionStr"); }
+        }
     }
 }

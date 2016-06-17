@@ -5,17 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EterManager.UserInterface.Views"
         mc:Ignorable="d"
-        Title="Error - Unexpected exception occured" Height="230.77" Width="597.231" ResizeMode="NoResize" WindowStyle="ToolWindow">
+        Title="Error - Unexpected exception occured" Height="349.692" Width="723.668" ResizeMode="NoResize" WindowStyle="ToolWindow">
     <Grid>
 
         <Image Source="../VisualResources/Images/stop_error.png" Margin="10,10,0,0" RenderTransformOrigin="0.803,0.522" Height="37" VerticalAlignment="Top" HorizontalAlignment="Left" Width="41"/>
-        <TextBlock Margin="67,18,10,136" TextWrapping="Wrap" Text="{Binding Exception.Message}" FontSize="14"/>
-        <Expander Header="Inner Exception" HorizontalAlignment="Left" Margin="10,72,0,41" Width="523">
-            <Grid>
-                <TextBlock TextWrapping="Wrap" Text="{Binding Exception.InnerException.Message}"/>
-            </Grid>
-        </Expander>
-        <Button HorizontalAlignment="Left" Margin="10,0,0,10" Width="121" Height="24" VerticalAlignment="Bottom">
+        <TextBox IsReadOnly="True" Margin="67,18,23,39" TextWrapping="Wrap" Text="{Binding ExceptionStr}" FontSize="14"/>
+        <Button HorizontalAlignment="Left" Margin="10,0,0,10" Width="133" Height="24" VerticalAlignment="Bottom">
             <Button.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>

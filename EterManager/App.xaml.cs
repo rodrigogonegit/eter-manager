@@ -5,6 +5,7 @@ using EterManager.Services;
 using EterManager.Services.Abstract;
 using EterManager.Services.Concrete;
 using EterManager.UserInterface.Views;
+using EterManager.UserInterface.ViewModels;
 using Ninject;
 using System.Windows;
 
@@ -54,12 +55,22 @@ namespace EterManager
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            string exp = e.Exception.ToString();
+            e.Handled = true;
+            //string exp = e.Exception.ToString();
 
-            if (e.Exception.InnerException != null)
-                exp += e.Exception.InnerException.ToString();
+            //if (e.Exception.InnerException != null)
+            //    exp += e.Exception.InnerException.ToString();
 
-            File.WriteAllText("errorLog.txt", exp);
+            //File.WriteAllText("errorLog.txt", exp);
+
+            // Get instance of view manager
+            var viewManager = ((App)Application.Current).GetInstance<IViewManager>();
+
+            // Create new window
+            var wnd = viewManager.ShowWindow<ExceptionWindow>(true, "Exception window");
+
+            // Set exception
+            (wnd.DataContext as ExceptionWindowViewModel).Exception = e.Exception;
         }
-    }
+}
 }

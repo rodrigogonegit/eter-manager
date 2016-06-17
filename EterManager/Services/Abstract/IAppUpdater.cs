@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using EterManager.Models;
+using System.Threading.Tasks;
 
 namespace EterManager.Services.Abstract
 {
@@ -12,7 +13,7 @@ namespace EterManager.Services.Abstract
         /// Checks the version
         /// </summary>
         /// <returns></returns>
-        void CheckVersions();
+        Task CheckVersions();
 
         /// <summary>
         /// Downloads the version package.

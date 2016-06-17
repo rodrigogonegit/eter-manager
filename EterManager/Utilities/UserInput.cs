@@ -12,11 +12,21 @@ namespace EterManager.Utilities
     {
         private static ILocale Locale = ((App)Application.Current).GetInstance<ILocale>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="args"></param>
         public static void ShowMessage(string msg, params object[] args)
         {
             System.Windows.Forms.MessageBox.Show(Locale.GetString(msg));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="args"></param>
         public static void YesNoMessage(string msg, params object[] args)
         {
             // ReSharper disable once LocalizableElement

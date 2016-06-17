@@ -22,29 +22,13 @@ namespace EterManager.UserInterface.ViewModels
         /// </summary>
         public UpdateMenuViewModel()
         {
-            InitializeCommands();
             CanCheckUpdates = true;
-            AppUpdater.NewVersionFound += (sender, args) =>
-            {
-                if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    IsUpdating = true;
-                    AppUpdater.DownloadLatestVersion();
-                    AppUpdater.DownloadProgressChanged += AppUpdaterOnDownloadProgressChanged;
-                    AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
-                }
-            };
-        }
 
-        private void AppUpdaterOnDownloadCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            DownloadProgress = 100;
-            IsUpdating = false;
-        }
+            // Initialize all commands
+            InitializeCommands();
 
-        private void AppUpdaterOnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            DownloadProgress = (int)(e.BytesReceived * 1.0 / e.TotalBytesToReceive * 100.0);
+            // Initialize update service
+            InitializeUpdateService();
         }
 
         /// <summary>
@@ -55,24 +39,73 @@ namespace EterManager.UserInterface.ViewModels
             _checkUpdates = new RelayCommand(p => CheckUpdatesAction(), p => CanCheckUpdates);
         }
 
+        /// <summary>
+        /// Initializes all related to the Update service
+        /// </summary>
+        private void InitializeUpdateService()
+        {
+            // Handle New version found
+            AppUpdater.NewVersionFound += (sender, args) =>
+            {
+                if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    IsUpdating = true;
+                    AppUpdater.DownloadLatestVersion();
+                    AppUpdater.DownloadProgressChanged += AppUpdaterOnDownloadProgressChanged;
+                    AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
+                }
+            };
+
+            // Check for updates
+            if (CheckUpdatesCommand.CanExecute(null))
+                CheckUpdatesCommand.Execute(null);
+        }
+
         #endregion
+
+        #region Update Service Events
+
+        /// <summary>
+        /// Called on DownloadCompleted
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AppUpdaterOnDownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            DownloadProgress = 100;
+            IsUpdating = false;
+        }
+
+        /// <summary>
+        /// Called on DownloadProgressChanged
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AppUpdaterOnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            DownloadProgress = (int)(e.BytesReceived * 1.0 / e.TotalBytesToReceive * 100.0);
+        }
+
+        #endregion
+
+        #region Commands
 
         private RelayCommand _checkUpdates;
 
         /// <summary>
         /// Action performed when CheckUpdates is called
         /// </summary>
-        private void CheckUpdatesAction()
+        private async void CheckUpdatesAction()
         {
             CanCheckUpdates = false;
             try
             {
-                AppUpdater.CheckVersions();
+                await AppUpdater.CheckVersions();
                 Changelog = AppUpdater.ToString();
             }
-            catch (Exception)
+            catch (WebException)
             {
-                UserInput.ShowMessage("Could not reach server! Please try again later");
+                System.Windows.Forms.MessageBox.Show("Could not reach server! Please try again later");
             }
             
             CanCheckUpdates = true;
@@ -142,6 +175,6 @@ namespace EterManager.UserInterface.ViewModels
             set { SetProperty(ref _isUpdating, value, "IsUpdating"); }
         }
 
-
+        #endregion
     }
 }
