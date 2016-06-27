@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using EterManager.Base;
+using ObservableImmutable;
 
 namespace EterManager.UserInterface.ViewModels
 {
@@ -11,7 +14,14 @@ namespace EterManager.UserInterface.ViewModels
     {
         public ExceptionWindowViewModel()
         {
-            
+            SystemInfoItems = new ObservableImmutableDictionary<string, string>();
+
+            var type = typeof(Environment);
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Static);
+            foreach (var pi in properties)
+            {
+                SystemInfoItems.Add(pi.Name, pi.GetValue(null).ToString());
+            }
         }
 
         private Exception _exception;
@@ -39,5 +49,20 @@ namespace EterManager.UserInterface.ViewModels
             get { return _exceptionStr; }
             set { SetProperty(ref _exceptionStr, value, "ExceptionStr"); }
         }
+
+        private ObservableImmutableDictionary<string, string> _systemInfoItems;
+
+        /// <summary>
+        /// Gets or sets the system information items.
+        /// </summary>
+        /// <value>
+        /// The system information items.
+        /// </value>
+        public ObservableImmutableDictionary<string, string> SystemInfoItems
+        {
+            get { return _systemInfoItems; }
+            set { SetProperty(ref _systemInfoItems, value, "SystemInfoItems"); }
+        }
+
     }
 }

@@ -6,13 +6,19 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="MaxSimFiles" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="UpdateMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="UpdateMode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">AUTO</Value>
-    </Setting>
     <Setting Name="LastVersionCheck" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">06/20/2016 03:04:00</Value>
+    </Setting>
+    <Setting Name="AutomaticCheckPeriod" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

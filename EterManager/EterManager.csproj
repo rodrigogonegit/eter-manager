@@ -84,6 +84,7 @@
     <Compile Include="Base\ViewModelBase.cs" />
     <Compile Include="Caliburn.Micro\EventAggregator.cs" />
     <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
+    <Compile Include="DataAccessLayer\AppSettings.cs" />
     <Compile Include="Models\VersionModel.cs" />
     <Compile Include="Services\Abstract\IAppUpdater.cs" />
     <Compile Include="Services\Concrete\AppUpdater.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="UserInterface\Views\VirtualTreeViewWindow.xaml.cs">
       <DependentUpon>VirtualTreeViewWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\AutoClosingMessageBox.cs" />
     <Compile Include="Utilities\CrcHelper.cs" />
     <Compile Include="Utilities\EterHelper.cs" />
     <Compile Include="Utilities\Extensions.cs" />
@@ -374,6 +376,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UserInterface\VisualResources\Images\send.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UserInterface\VisualResources\Images\binary_tree.png" />
+    <Resource Include="UserInterface\VisualResources\Images\download.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

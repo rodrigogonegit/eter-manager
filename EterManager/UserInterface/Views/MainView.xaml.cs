@@ -37,6 +37,12 @@ namespace EterManager.UserInterface.Views
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             (DataContext as MainWindowVm).OnWindowClose(sender, cancelEventArgs);
+            Application.Current.Shutdown();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            (DataContext as MainWindowVm).OnWindowActivated();
         }
     }
 }

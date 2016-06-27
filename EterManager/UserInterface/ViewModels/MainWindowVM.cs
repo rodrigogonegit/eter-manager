@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -12,6 +13,7 @@ using EterManager.UserInterface.Views;
 using EterManager.Utilities;
 using ObservableImmutable;
 using System.Net;
+using EterManager.Properties;
 
 namespace EterManager.UserInterface.ViewModels
 {
@@ -50,7 +52,13 @@ namespace EterManager.UserInterface.ViewModels
         /// </summary>
         private void Initialize()
         {
-            Properties.Settings.Default.Upgrade();
+            if (Settings.Default.UpgradeRequired)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.UpgradeRequired = false;
+                Settings.Default.Save();
+            }
+
             Instance = this;
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -76,15 +84,34 @@ namespace EterManager.UserInterface.ViewModels
             if (!String.IsNullOrWhiteSpace(profileName))
             {
                 //SelectedWorkingProfile = new ClientProfileVm(ClientProfile.GetProfileByPredicate(p => String.Equals(p.Name, profileName, StringComparison.CurrentCultureIgnoreCase)));
-                SelectedWorkingProfile = ProfileList.First(x => x.Name == profileName);
+                SelectedWorkingProfile = ProfileList.FirstOrDefault(x => x.Name == profileName);
 
                 // To make sure every other class is udpated
-                Handle(SelectedWorkingProfile);
+                if (SelectedWorkingProfile != null)
+                    Handle(SelectedWorkingProfile);
             }
+
+            // Set update menu string to default value
+            UpdateMenuString = "Check for updates";
         }
 
         private async void InitializeVersionService()
         {
+            // Handle New version found
+            AppUpdater.CheckVersionsCompleted += (sender, args) =>
+            {
+                if (args.AskToDownloadHandled || args.TargetSubscriberType != null)
+                    return;
+
+                if (args.HasNewVersionAvailable)
+                {
+                    ViewManager.ShowWindow<UpdateMenuView>();
+                    UpdateMenuString = "There's an update available!";
+                }
+
+                args.AskToDownloadHandled = true;
+            };
+
             // Check for new versions
             try
             {
@@ -94,15 +121,6 @@ namespace EterManager.UserInterface.ViewModels
             {
                 WindowLog.Error("SERVER_DOWN", "App");
             }
-
-            AppUpdater.NewVersionFound += (sender, args) =>
-            {
-                if (MessageBox.Show("Download latest version?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    AppUpdater.DownloadLatestVersion();
-                    AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
-                }
-            };
         }
 
         /// <summary>
@@ -129,7 +147,7 @@ namespace EterManager.UserInterface.ViewModels
             ProfileList = list;
             
             if (!String.IsNullOrWhiteSpace(oldProfileName))
-                SelectedWorkingProfile = ProfileList.First(x => x.Name == oldProfileName);
+                SelectedWorkingProfile = ProfileList.FirstOrDefault(x => x.Name == oldProfileName);
         }
 
         #endregion
@@ -184,10 +202,7 @@ namespace EterManager.UserInterface.ViewModels
         /// <summary>
         /// OpenWindowCommand interface
         /// </summary>
-        public ICommand OpenWindowCommand
-        {
-            get { return _openWindow; }
-        }
+        public ICommand OpenWindowCommand => _openWindow;
 
         #endregion
 
@@ -200,6 +215,21 @@ namespace EterManager.UserInterface.ViewModels
         #endregion
 
         #region Presentation Members
+
+        private string _updateMenuString;
+
+        /// <summary>
+        /// Gets or sets the update menu string.
+        /// </summary>
+        /// <value>
+        /// The update menu string.
+        /// </value>
+        public string UpdateMenuString
+        {
+            get { return _updateMenuString; }
+            set { SetProperty(ref _updateMenuString, value, "UpdateMenuString"); }
+        }
+
 
         private bool _canChangeProfile;
 
@@ -295,6 +325,14 @@ namespace EterManager.UserInterface.ViewModels
             Properties.Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Called when [window activated] (got focus).
+        /// </summary>
+        public void OnWindowActivated()
+        {
+            UpdateMenuString = AppUpdater.IsUpdateAvailable ? "There's an update available!" : "Check for updates";
+        }
+
         #endregion
 
         #region AppUpdater Events
@@ -307,11 +345,11 @@ namespace EterManager.UserInterface.ViewModels
         /// <exception cref="System.NotImplementedException"></exception>
         private void AppUpdaterOnDownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            if (Properties.Settings.Default.UpdateMode == "ASK_INSTALL" && MessageBox.Show("An update has been downloaded", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (Properties.Settings.Default.UpdateMode == 1 && MessageBox.Show("An update has been downloaded", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 AppUpdater.InstallLatestVersion();
             }
-            else if (Properties.Settings.Default.UpdateMode == "AUTO")
+            else if (Properties.Settings.Default.UpdateMode == 2)
             {
                 AppUpdater.InstallLatestVersion();
             }

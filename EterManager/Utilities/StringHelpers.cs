@@ -20,7 +20,7 @@ namespace EterManager.Utilities
             if (String.IsNullOrWhiteSpace(str)) return String.Empty;
             if (str[str.Length - 1] != '\\' && str[str.Length - 1] !='/')
             {
-                str += "/";
+                str += "\\";
             }
             return str;
         }

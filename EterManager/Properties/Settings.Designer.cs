@@ -37,7 +37,7 @@ namespace EterManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int MaxSimFiles {
             get {
                 return ((int)(this["MaxSimFiles"]));
@@ -49,10 +49,10 @@ namespace EterManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AUTO")]
-        public string UpdateMode {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int UpdateMode {
             get {
-                return ((string)(this["UpdateMode"]));
+                return ((int)(this["UpdateMode"]));
             }
             set {
                 this["UpdateMode"] = value;
@@ -61,12 +61,37 @@ namespace EterManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("06/20/2016 03:04:00")]
         public global::System.DateTime LastVersionCheck {
             get {
                 return ((global::System.DateTime)(this["LastVersionCheck"]));
             }
             set {
                 this["LastVersionCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int AutomaticCheckPeriod {
+            get {
+                return ((int)(this["AutomaticCheckPeriod"]));
+            }
+            set {
+                this["AutomaticCheckPeriod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpgradeRequired {
+            get {
+                return ((bool)(this["UpgradeRequired"]));
+            }
+            set {
+                this["UpgradeRequired"] = value;
             }
         }
     }

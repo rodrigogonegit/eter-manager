@@ -6,6 +6,13 @@ namespace EterManager.DataAccessLayer
 {
     class DrivePointsDal
     {
+        static DrivePointsDal()
+        {
+            if (!File.Exists("AppData/dp.settings"))
+            {
+                File.WriteAllText("AppData/dp.settings", "ymir work=d:/ymir work");
+            }
+        }
         /// <summary>
         /// Return Dictionary containning correspondencis between actual paths and drive points
         /// </summary>

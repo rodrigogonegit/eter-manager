@@ -6,16 +6,31 @@
         xmlns:local="clr-namespace:EterManager.UserInterface.Views"
         xmlns:converters="clr-namespace:EterManager.UserInterface.Converters"
         mc:Ignorable="d"
-        Title="Update Menu - Eter Manager" Height="358.154" Width="622.154">
+        Title="Update Menu - Eter Manager" MinHeight="175" Height="156.133" Width="555.6" MinWidth="600">
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
     <Grid>
-        <TextBox IsReadOnly="True" Margin="10,41,10,39" TextWrapping="Wrap" Text="{Binding Changelog}"/>
-        <Label Content="Changelog" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Button Command="{Binding CheckUpdatesCommand}" Content="Check now" HorizontalAlignment="Left" Margin="10,0,0,10" Width="75" Height="24" VerticalAlignment="Bottom"/>
-        <ProgressBar Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" Value="{Binding DownloadProgress}" HorizontalAlignment="Left" Margin="115,0,0,11" VerticalAlignment="Bottom" Height="19" RenderTransformOrigin="0.5,0.5" Width="97">
-        </ProgressBar>
+        <Button Command="{Binding CheckUpdatesCommand}" Content="{Binding ActionButtonText}" HorizontalAlignment="Left" Margin="9,0,0,20" Width="129" Height="21" VerticalAlignment="Bottom"/>
+        <ComboBox SelectedIndex="{Binding CheckPeriodIndex, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="144,0,0,75.8" Width="120" Height="22" VerticalAlignment="Bottom">
+            <ComboBoxItem Content="Never"/>
+            <ComboBoxItem Content="Daily"/>
+            <ComboBoxItem Content="Weekly"/>
+        </ComboBox>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="9,0,0,79.8" TextWrapping="Wrap" Text="Automatic check period " Height="16" VerticalAlignment="Bottom"/>
+        <ComboBox SelectedIndex="{Binding UpdateModeIndex, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="144,0,0,48.8" VerticalAlignment="Bottom" Width="266">
+            <ComboBoxItem Content="Ask to download and install"/>
+            <ComboBoxItem Content="Download but ask for permission to install"/>
+            <ComboBoxItem Content="Download and install automatically"/>
+        </ComboBox>
+        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,54.8" TextWrapping="Wrap" Text="Update mode " VerticalAlignment="Bottom"/>
+        <TextBlock HorizontalAlignment="Left" Margin="144,0,0,22" TextWrapping="Wrap" Text="Last check:" Height="16" VerticalAlignment="Bottom"/>
+        <TextBlock HorizontalAlignment="Left" Margin="205,0,0,22" TextWrapping="Wrap" Text="{Binding LastCheckDate, StringFormat='{}{0:dd/MM/yyyy a\\t h:mm tt}'}" Width="143" Height="16" VerticalAlignment="Bottom"/>
+        <Expander IsExpanded="False" Header="Changelog" Margin="9,10,9.6,106" Collapsed="Expander_Collapsed" Expanded="changeLogExpander_Expanded">
+            <Grid>
+                <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{Binding Changelog}"/>
+            </Grid>
+        </Expander>
 
     </Grid>
 </Window>

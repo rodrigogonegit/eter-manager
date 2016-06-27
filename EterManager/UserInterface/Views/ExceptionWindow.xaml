@@ -5,12 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EterManager.UserInterface.Views"
         mc:Ignorable="d"
-        Title="Error - Unexpected exception occured" Height="349.692" Width="723.668" ResizeMode="NoResize" WindowStyle="ToolWindow">
+        Title="Error - Unexpected exception occured" Height="361.692" Width="758.868" ResizeMode="NoResize" WindowStyle="ToolWindow">
     <Grid>
 
         <Image Source="../VisualResources/Images/stop_error.png" Margin="10,10,0,0" RenderTransformOrigin="0.803,0.522" Height="37" VerticalAlignment="Top" HorizontalAlignment="Left" Width="41"/>
-        <TextBox IsReadOnly="True" Margin="67,18,23,39" TextWrapping="Wrap" Text="{Binding ExceptionStr}" FontSize="14"/>
-        <Button HorizontalAlignment="Left" Margin="10,0,0,10" Width="133" Height="24" VerticalAlignment="Bottom">
+        <Button Visibility="Hidden" HorizontalAlignment="Left" Margin="10,0,0,10" Width="133" Height="24" VerticalAlignment="Bottom">
             <Button.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -22,5 +21,32 @@
                 </Grid>
             </Button.Content>
         </Button>
+        <TabControl x:Name="tabControl" Margin="10,52,10.2,38.8">
+            <TabItem Header="System information">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid ItemsSource="{Binding SystemInfoItems}" Height="230" VerticalAlignment="Top">
+                        <DataGrid.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="Key" />
+                                        <ColumnDefinition SharedSizeGroup="Name" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="2" Text="{Binding Key}" Grid.Column="0"/>
+                                    <TextBlock Margin="2" Text="{Binding Value}" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGrid.ItemTemplate>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Exception">
+                <Grid Background="#FFE5E5E5">
+                    <TreeView>
+                        <TextBox Text="{Binding ExceptionStr}"></TextBox>
+                    </TreeView>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

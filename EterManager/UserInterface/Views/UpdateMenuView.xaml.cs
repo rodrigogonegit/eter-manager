@@ -21,6 +21,8 @@ namespace EterManager.UserInterface.Views
     /// </summary>
     public partial class UpdateMenuView : Window
     {
+        private double _oldWndHeight = 370;
+
         public UpdateMenuView()
         {
             InitializeComponent();
@@ -30,6 +32,22 @@ namespace EterManager.UserInterface.Views
             {
                 DataContext = ((App)Application.Current).GetInstance<UpdateMenuViewModel>();
             }
+        }
+
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            var wnd = ((Window)this);
+
+            _oldWndHeight = wnd.ActualHeight;
+            wnd.Height = wnd.ActualHeight - _oldWndHeight + 20;
+        }
+
+        private void changeLogExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            var wnd = ((Window)this);
+
+            if (_oldWndHeight != 0)
+                wnd.Height = _oldWndHeight;
         }
     }
 }

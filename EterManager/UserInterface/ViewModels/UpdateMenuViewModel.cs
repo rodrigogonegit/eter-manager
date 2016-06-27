@@ -23,12 +23,32 @@ namespace EterManager.UserInterface.ViewModels
         public UpdateMenuViewModel()
         {
             CanCheckUpdates = true;
+            Changelog = AppUpdater.LatestVersion != null ? AppUpdater.ToString() : "";
+            LastCheckDate = Properties.Settings.Default.LastVersionCheck;
+            UpdateModeIndex = Properties.Settings.Default.UpdateMode;
+            CheckPeriodIndex = Properties.Settings.Default.AutomaticCheckPeriod;
+
+            // Initializes everything related to this VM
+            Initialize();
 
             // Initialize all commands
             InitializeCommands();
 
             // Initialize update service
             InitializeUpdateService();
+        }
+
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
+        private void Initialize()
+        {
+            if (AppUpdater.IsUpdatePackageAvailable())
+                ActionButtonText = "Install update!";
+            else if (AppUpdater.IsUpdateAvailable)
+                ActionButtonText = "Update!";
+            else
+                ActionButtonText = "Check now!";
         }
 
         /// <summary>
@@ -44,21 +64,73 @@ namespace EterManager.UserInterface.ViewModels
         /// </summary>
         private void InitializeUpdateService()
         {
-            // Handle New version found
-            AppUpdater.NewVersionFound += (sender, args) =>
-            {
-                if (MessageBox.Show("There's a new version available. Would you like to install it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    IsUpdating = true;
-                    AppUpdater.DownloadLatestVersion();
-                    AppUpdater.DownloadProgressChanged += AppUpdaterOnDownloadProgressChanged;
-                    AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
-                }
-            };
+            AppUpdater.DownloadProgressChanged += AppUpdaterOnDownloadProgressChanged;
+            AppUpdater.DownloadCompleted += AppUpdaterOnDownloadCompleted;
 
-            // Check for updates
-            if (CheckUpdatesCommand.CanExecute(null))
-                CheckUpdatesCommand.Execute(null);
+            // Handle New version found
+            AppUpdater.CheckVersionsCompleted += async (sender, args) =>
+            {
+                if (args.AskToDownloadHandled ||
+                    (!args.AskToDownloadHandled && args.TargetSubscriberType != typeof(UpdateMenuViewModel)))
+                    return;
+
+                // TODO: refactor this, it's fucking messy
+                if (args.HasNewVersionAvailable)
+                {
+                    // 0 = Ask to download and install
+                    // 1 = Ask to install
+                    // 2 = Auto download and install
+
+                    if (UpdateModeIndex == 0)
+                    {
+                        // Independt ifs since the user might refuse to download
+                        if (!AppUpdater.IsUpdatePackageAvailable() &&
+                            MessageBox.Show("There's a new version available. Would you like to download it?",
+                                "Update available", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                            MessageBoxResult.Yes)
+                        {
+                            IsUpdating = true;
+                            await AppUpdater.DownloadLatestVersion();
+                        }
+                        if (
+                            MessageBox.Show("Would you like to install the update?", "Update available",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                            MessageBoxResult.Yes)
+                        {
+                            AppUpdater.InstallLatestVersion();
+                        }
+                    }
+                    else // No need to check since the possible values are 0 to 2
+                    {
+                        IsUpdating = true;
+                        await AppUpdater.DownloadLatestVersion();
+
+                        if (UpdateModeIndex == 1)
+                        {
+                            if (
+                                MessageBox.Show("Would you like to install the update?", "Update available",
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                                MessageBoxResult.Yes)
+                            {
+                                AppUpdater.InstallLatestVersion();
+                            }
+                        }
+                        else
+                        {
+                            await AppUpdater.DownloadLatestVersion();
+                            AutoClosingMessageBox.Show("The update will be installed in 3 seconds...",
+                                "Closing in 3 seconds!", 3000);
+                            AppUpdater.InstallLatestVersion();
+                        }
+                    }
+                }
+                else
+                    MessageBox.Show("The latest version is already installed!", "No update available",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                IsUpdating = false;
+                args.AskToDownloadHandled = true;
+            };
         }
 
         #endregion
@@ -72,8 +144,7 @@ namespace EterManager.UserInterface.ViewModels
         /// <param name="e"></param>
         private void AppUpdaterOnDownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            DownloadProgress = 100;
-            IsUpdating = false;
+            ActionButtonText = "Install!";
         }
 
         /// <summary>
@@ -83,14 +154,23 @@ namespace EterManager.UserInterface.ViewModels
         /// <param name="e"></param>
         private void AppUpdaterOnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            DownloadProgress = (int)(e.BytesReceived * 1.0 / e.TotalBytesToReceive * 100.0);
+            ActionButtonText = $"Updating [{(int) (e.BytesReceived*1.0/e.TotalBytesToReceive*100.0)}%]";
         }
 
         #endregion
 
         #region Commands
 
+        #region RelayCommand objects  
+
+        /// <summary>
+        /// Handles the command functionality for CheckUpdates
+        /// </summary>
         private RelayCommand _checkUpdates;
+
+        #endregion
+
+        #region Command Actions
 
         /// <summary>
         /// Action performed when CheckUpdates is called
@@ -98,18 +178,26 @@ namespace EterManager.UserInterface.ViewModels
         private async void CheckUpdatesAction()
         {
             CanCheckUpdates = false;
+
             try
             {
-                await AppUpdater.CheckVersions();
+                await AppUpdater.CheckVersions(typeof(UpdateMenuViewModel));
+
                 Changelog = AppUpdater.ToString();
             }
             catch (WebException)
             {
-                System.Windows.Forms.MessageBox.Show("Could not reach server! Please try again later", "Could not reach server", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Could not reach server! Please try again later",
+                    "Could not reach server", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Error);
             }
-            
+
             CanCheckUpdates = true;
         }
+
+        #endregion
+
+        #region ICommand
 
         /// <summary>
         /// Gets or sets the check updates command.
@@ -118,6 +206,28 @@ namespace EterManager.UserInterface.ViewModels
         /// The check updates command.
         /// </value>
         public ICommand CheckUpdatesCommand => _checkUpdates;
+
+        #endregion
+
+        #endregion
+
+        #region Properties
+
+        #region Presentation
+    
+        private string _actionButtonText;
+
+        /// <summary>
+        /// Gets or sets the action button text.
+        /// </summary>
+        /// <value>
+        /// The action button text.
+        /// </value>
+        public string ActionButtonText
+        {
+            get { return _actionButtonText; }
+            set { SetProperty(ref _actionButtonText, value, "ActionButtonText"); }
+        }
 
         private bool _canCheckUpdates;
 
@@ -174,6 +284,57 @@ namespace EterManager.UserInterface.ViewModels
             get { return _isUpdating; }
             set { SetProperty(ref _isUpdating, value, "IsUpdating"); }
         }
+
+        private int _checkPeriod;
+
+        /// <summary>
+        /// Automatic check period
+        /// </summary>
+        public int CheckPeriodIndex
+        {
+            get { return _checkPeriod; }
+            set
+            {
+                SetProperty(ref _checkPeriod, value, "CheckPeriodIndex");
+
+                Properties.Settings.Default.AutomaticCheckPeriod = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private DateTime _lastCheckDate;
+
+        /// <summary>
+        /// Last time an update was checked
+        /// </summary>
+        public DateTime LastCheckDate
+        {
+            get { return _lastCheckDate; }
+            set
+            {
+                SetProperty(ref _lastCheckDate, value, "LastCheckDate");
+                Properties.Settings.Default.LastVersionCheck = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private int _updateModeIndex;
+
+        /// <summary>
+        /// Update mode index
+        /// </summary>
+        public int UpdateModeIndex
+        {
+            get { return _updateModeIndex; }
+            set
+            {
+                SetProperty(ref _updateModeIndex, value, "UpdateModeIndex");
+                Properties.Settings.Default.UpdateMode = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        #endregion
 
         #endregion
     }
