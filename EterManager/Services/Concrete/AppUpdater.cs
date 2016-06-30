@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using EterManager.Models;
 using EterManager.Utilities;
 using System.Timers;
+using EterManager.UserInterface.ViewModels;
 
 namespace EterManager.Services.Concrete
 {
@@ -119,7 +120,8 @@ namespace EterManager.Services.Concrete
         public async Task CheckVersions(Type targetSubscriber = null)
         {
             // If 3 mins passed, update info
-            if (Properties.Settings.Default.LastVersionCheck.AddMinutes(3) <= DateTime.Now)
+            if (targetSubscriber == typeof(UpdateMenuViewModel) && Properties.Settings.Default.LastVersionCheck.AddSeconds(30) <= DateTime.Now
+                || Properties.Settings.Default.LastVersionCheck.AddMinutes(3) <= DateTime.Now)
             {
                 // Initialize an HttpWebRequest for the current URL.
                 var webReq = (HttpWebRequest) WebRequest.Create(ConstantsBase.ApiUrl + "Version");
@@ -156,15 +158,19 @@ namespace EterManager.Services.Concrete
                 Properties.Settings.Default.LastVersionCheck = DateTime.Now;
                 Properties.Settings.Default.Save();
 
-                // Get latest version
-                LatestVersion = VersionList.MaxBy(x => x.VersionNumber);
+            }
 
-                if (CheckVersionsCompleted != null)
-                {
-                    bool update = LatestVersion.VersionNumber > _currentVersion;
-                    IsUpdateAvailable = update;
-                    CheckVersionsCompleted(this, new CheckVersionEventArgs(update, targetSubscriber));
-                }
+            if (VersionList == null || !VersionList.Any())
+                return;
+
+            // Get latest version
+            LatestVersion = VersionList.MaxBy(x => x.VersionNumber);
+
+            if (CheckVersionsCompleted != null)
+            {
+                bool update = LatestVersion.VersionNumber > _currentVersion;
+                IsUpdateAvailable = update;
+                CheckVersionsCompleted(this, new CheckVersionEventArgs(update, targetSubscriber));
             }
         }
 

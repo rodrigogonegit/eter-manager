@@ -131,6 +131,7 @@
     <Compile Include="UserInterface\ViewModels\IssuesListVm.cs" />
     <Compile Include="UserInterface\ViewModels\MainWindowVm.cs" />
     <Compile Include="UserInterface\ViewModels\ProfilesVm.cs" />
+    <Compile Include="UserInterface\ViewModels\SizeOptimizerWindowViewModel.cs" />
     <Compile Include="UserInterface\ViewModels\TreeItem\ITreeViewItem.cs" />
     <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFileVm.cs" />
     <Compile Include="UserInterface\ViewModels\TreeItem\TreeItemFolderVm.cs" />
@@ -154,6 +155,9 @@
     </Compile>
     <Compile Include="UserInterface\Views\ProfileManagerWindow.xaml.cs">
       <DependentUpon>ProfileManagerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Views\SizeOptimizerWindow.xaml.cs">
+      <DependentUpon>SizeOptimizerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\Views\UpdateMenuView.xaml.cs">
       <DependentUpon>UpdateMenuView.xaml</DependentUpon>
@@ -210,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterface\Views\ProfileManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Views\SizeOptimizerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

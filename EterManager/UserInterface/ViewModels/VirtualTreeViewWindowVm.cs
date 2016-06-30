@@ -301,6 +301,20 @@ namespace EterManager.UserInterface.ViewModels
 
         #region Presentation Members
 
+        private ObservableImmutableList<ITreeViewItem> _selectedItems;
+
+        /// <summary>
+        /// Gets or sets the selected items.
+        /// </summary>
+        /// <value>
+        /// The selected item.
+        /// </value>
+        public ObservableImmutableList<ITreeViewItem> SelectedItems
+        {
+            get { return _selectedItems; }
+            set { SetProperty(ref _selectedItems, value, "SelectedItems"); }
+        }
+
         private string _state;
 
         /// <summary>
@@ -344,8 +358,6 @@ namespace EterManager.UserInterface.ViewModels
             get { return _searchFileText; }
             set { SetProperty(ref _searchFileText, value, "SearchFileText"); }
         }
-        
-        
 
         #endregion
 

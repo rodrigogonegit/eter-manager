@@ -181,7 +181,14 @@ namespace EterManager.UserInterface.ViewModels
 
             try
             {
+                //if (AppUpdater.IsUpdatePackageAvailable())
+                //    AppUpdater.InstallLatestVersion();
+                //else if (AppUpdater.IsUpdateAvailable)
+                //    await AppUpdater.DownloadLatestVersion();
+                //else
                 await AppUpdater.CheckVersions(typeof(UpdateMenuViewModel));
+
+                OnUpdateView?.Invoke(this);
 
                 Changelog = AppUpdater.ToString();
             }
@@ -335,6 +342,21 @@ namespace EterManager.UserInterface.ViewModels
         }
 
         #endregion
+
+        #endregion
+
+        #region Update View
+
+        /// <summary>
+        /// Forces UI to refresh
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        public delegate void UpdateViewDelegate(object sender);
+
+        /// <summary>
+        /// Occurs when [on update view].
+        /// </summary>
+        public event UpdateViewDelegate OnUpdateView;
 
         #endregion
     }

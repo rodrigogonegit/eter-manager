@@ -34,18 +34,10 @@ namespace AppUpdater
     
             try
             {
-                Process process;
+                Process process = null;
 
                 // If arg is not specified, then resort to default process name
-                if (args.Length < 1)
-                {
-                    Log("PID not specified. Trying to find by name...");
-                    // If PID not specified, search by name
-                    process = Process.GetProcessesByName("EterManager").FirstOrDefault();
-
-                    // Might be null since it may be ran independently
-                }
-                else
+                if (args.Length >= 1)
                 {
                     Log("PID received as argument. Looking it up...");
 
@@ -53,13 +45,39 @@ namespace AppUpdater
                     int pid;
                     int.TryParse(args[0], out pid);
                     process = Process.GetProcesses().FirstOrDefault(x => x.Id == pid);
+
+                    // Kill if found
+                    if (process != null && !process.HasExited)
+                    {
+                        Log($"Found target process (PID: {process.Id}. Killing it...");
+                        process.Kill();
+                    }
+                }
+                else
+                {
+                    process = Process.GetProcessesByName("EterManager").FirstOrDefault();
                 }
 
-                // Kill if found
-                if (process != null && !process.HasExited)
+                bool isFirst = true;
+
+                while (process != null)
                 {
-                    Log($"Found target process (PID: {process.Id}. Killing it...");
-                    process.Kill();
+                    if (!isFirst)
+                    {
+                        Log("Manually shutdown EterManager.exe to continue updating");
+                        Console.ReadKey();
+                    }
+
+                    Log("Checking if main process is still alive...");
+                    process = Process.GetProcessesByName("EterManager").FirstOrDefault();
+
+                    if (process != null)
+                    {
+                        Log($"Still alive, trying to kill it...");
+                        process.Kill();
+                    }
+
+                    isFirst = false;
                 }
 
                 Log($"Checking local files...");
@@ -93,7 +111,9 @@ namespace AppUpdater
             catch (Exception ex)
             {
                 Log(ex.ToString());
+                Console.ReadKey();
             }
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -102,6 +122,7 @@ namespace AppUpdater
         /// <param name="message">The message.</param>
         static void Log(string message)
         {
+            Console.WriteLine($"[*] {message}");
             File.AppendAllText("updateLog.txt", $"[*] {message}" + Environment.NewLine);
         }
     }

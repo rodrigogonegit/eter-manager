@@ -31,7 +31,9 @@ namespace EterManager.UserInterface.Views
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 DataContext = ((App)Application.Current).GetInstance<UpdateMenuViewModel>();
+                (DataContext as UpdateMenuViewModel).OnUpdateView += ForceUiRefresh;
             }
+            
         }
 
         private void Expander_Collapsed(object sender, RoutedEventArgs e)
@@ -40,6 +42,7 @@ namespace EterManager.UserInterface.Views
 
             _oldWndHeight = wnd.ActualHeight;
             wnd.Height = wnd.ActualHeight - _oldWndHeight + 20;
+
         }
 
         private void changeLogExpander_Expanded(object sender, RoutedEventArgs e)
@@ -48,6 +51,11 @@ namespace EterManager.UserInterface.Views
 
             if (_oldWndHeight != 0)
                 wnd.Height = _oldWndHeight;
+        }
+
+        public void ForceUiRefresh(object sender)
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

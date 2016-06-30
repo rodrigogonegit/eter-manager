@@ -49,7 +49,7 @@ namespace EterManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public int UpdateMode {
             get {
                 return ((int)(this["UpdateMode"]));
@@ -73,7 +73,7 @@ namespace EterManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int AutomaticCheckPeriod {
             get {
                 return ((int)(this["AutomaticCheckPeriod"]));
@@ -92,6 +92,54 @@ namespace EterManager.Properties {
             }
             set {
                 this["UpgradeRequired"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500, 700")]
+        public global::System.Drawing.Size MainWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MainWindowSize"]));
+            }
+            set {
+                this["MainWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300, 305")]
+        public global::System.Drawing.Size VirtualViewWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["VirtualViewWindowSize"]));
+            }
+            set {
+                this["VirtualViewWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500, 300")]
+        public global::System.Drawing.Size IndexDetailsWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["IndexDetailsWindowSize"]));
+            }
+            set {
+                this["IndexDetailsWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500, 300")]
+        public global::System.Drawing.Size SizeOptimizerWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["SizeOptimizerWindowSize"]));
+            }
+            set {
+                this["SizeOptimizerWindowSize"] = value;
             }
         }
     }

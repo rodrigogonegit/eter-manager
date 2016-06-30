@@ -16,7 +16,7 @@
             <MenuItem Header="Manage" Height="25">
             <MenuItem Header="Profiles" Command="{Binding OpenWindowCommand}" CommandParameter="PROFILES_MANAGER">
                 <MenuItem.Icon>
-                    <Image Source="..\VisualResources\Images\user.png"/>
+                    <Image Width="25" Height="25" Source="..\VisualResources\Images\user.png"/>
                 </MenuItem.Icon>
             </MenuItem>
                 <!--<MenuItem Header="Packing filters" Command="{Binding OpenWindowCommand}" CommandParameter="PACKING_FILTERS"/>-->
@@ -24,7 +24,7 @@
             <MenuItem Header="Tools" >
                 <MenuItem Header="Virtual Tree View" Command="{Binding OpenWindowCommand}" CommandParameter="VIRTUAL_TREE_VIEW">
                     <MenuItem.Icon>
-                        <Image Source="..\VisualResources\Images\binary_tree.png"/>
+                        <Image Width="25" Height="25" Source="..\VisualResources\Images\binary_tree.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

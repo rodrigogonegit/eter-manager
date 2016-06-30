@@ -22,6 +22,14 @@ namespace EterManager.UserInterface.Views
         public IndexDetailsWindow()
         {
             InitializeComponent();
+
+            Height = Properties.Settings.Default.IndexDetailsWindowSize.Height;
+            Width = Properties.Settings.Default.IndexDetailsWindowSize.Width;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Properties.Settings.Default.IndexDetailsWindowSize = new System.Drawing.Size((int)ActualWidth, (int)ActualHeight);
         }
     }
 }

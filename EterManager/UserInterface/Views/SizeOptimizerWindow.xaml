@@ -6,10 +6,8 @@
         xmlns:local="clr-namespace:EterManager.UserInterface.Views"
         xmlns:UserControls="clr-namespace:EterManager.UserInterface.Views.UserControls" x:Class="EterManager.UserInterface.Views.SizeOptimizerWindow"
         mc:Ignorable="d"
-        Title="SizeOptimizerWindow" Height="230.769" Width="529.846">
+        Title="SizeOptimizerWindow" Height="230.769" Width="529.846" Closing="Window_Closing">
     <Grid>
-
-        <UserControls:SearchableTreeView HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="164" Width="502"/>
-
+        
     </Grid>
 </Window>
