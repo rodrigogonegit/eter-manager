@@ -1,0 +1,15 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EterManager.UserInterface.Views"
+        xmlns:UserControls="clr-namespace:EterManager.UserInterface.Views.UserControls" x:Class="EterManager.UserInterface.Views.SizeOptimizerWindow"
+        mc:Ignorable="d"
+        Title="SizeOptimizerWindow" Height="230.769" Width="529.846">
+    <Grid>
+
+        <UserControls:SearchableTreeView HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="164" Width="502"/>
+
+    </Grid>
+</Window>
